@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <vector>
-#include <cstring>
+#include <optional>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -52,6 +52,14 @@ private:
     GLFWwindow* window;
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+    VkDevice device;
+    VkQueue graphicsQueue;
+
+    struct QueueFamilyIndices {
+        // Add shorthand for checking if has value
+        std::optional<uint32_t> graphicsFamily;
+    };
 
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -157,10 +165,103 @@ private:
         createInstance();
         setupDebugMessenger();
         pickPhysicalDevice();
+        createLogicalDevice();
+    }
+
+    void createLogicalDevice() {
+        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+        queueCreateInfo.queueCount = 1;
+
+        float quePriority = 1.0f;
+        queueCreateInfo.pQueuePriorities = &quePriority;
+
+        VkPhysicalDeviceFeatures deviceFeatures{};
+
+        VkDeviceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.pQueueCreateInfos = &queueCreateInfo;
+        createInfo.queueCreateInfoCount = 1;
+
+        createInfo.pEnabledFeatures = &deviceFeatures;
+
+        createInfo.enabledExtensionCount = 0;
+
+        // Used for compatibility with older versions of Vulkan
+        if (enableValidationLayers) {
+            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+            createInfo.ppEnabledLayerNames = validationLayers.data();
+        }
+        else {
+            createInfo.enabledLayerCount = 0;
+        }
+
+        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create logical device!");
+        }
     }
 
     void pickPhysicalDevice() {
+        uint32_t deviceCount = 0;
+        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
+        if (deviceCount == 0) {
+            throw std::runtime_error("failed to find GPUs with Vulkan support!");
+        }
+
+        std::vector<VkPhysicalDevice> devices(deviceCount);
+        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+        for (const auto& device : devices) {
+            if (isDeviceSuitable(device)) {
+                physicalDevice = device;
+                break;
+            }
+        }
+
+        if (physicalDevice == VK_NULL_HANDLE) {
+            throw std::runtime_error("Failed to find a suitable GPU!");
+        }
+
+    }
+
+    bool isDeviceSuitable(VkPhysicalDevice device) {
+        QueueFamilyIndices indices = findQueueFamilies(device);
+
+        VkPhysicalDeviceProperties deviceProperties;
+        VkPhysicalDeviceFeatures deviceFeatures;
+        vkGetPhysicalDeviceProperties(device, &deviceProperties);
+        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+        // This currently just checks for a dedicated GPU. Add support for falling back to a CPU.
+        // https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families
+        // (Info here)
+        return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && indices.graphicsFamily.has_value();
+    }
+
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+        QueueFamilyIndices indices;
+
+        uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+        int i = 0;
+        for (const auto& queueFamily : queueFamilies) {
+            // early exit this
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                indices.graphicsFamily = i;
+            }
+
+            i++;
+        }
+
+        return indices;
     }
 
     void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
@@ -193,6 +294,8 @@ private:
         if (enableValidationLayers) {
             DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
         }
+
+        vkDestroyDevice(device, nullptr);
 
         vkDestroyInstance(instance, nullptr);
 
