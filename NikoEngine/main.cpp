@@ -55,6 +55,7 @@ private:
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device;
     VkQueue graphicsQueue;
+    VkSurfaceKHR surface;
 
     struct QueueFamilyIndices {
         // Add shorthand for checking if has value
