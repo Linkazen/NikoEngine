@@ -6,6 +6,7 @@ NikoEngine is a little project that I'm doing in my spare time, built from the g
 - [glfw-3.4](https://www.glfw.org/download.html) - 64 bit windows binaries
 - [stb](https://github.com/nothings/stb) - single-file public domain (or MIT licensed) libraries for C/C (only stb_image.h required)
 - Visual Studio 2022
+    - With [GLSL Language Integration](https://marketplace.visualstudio.com/items?itemName=DanielScherzer.GLSL2022)
 
 # How to Setup
 Install the VulkanSDK to your "C:/" drive using Vulkans installer.
@@ -14,13 +15,12 @@ Find your "Visual Studio 2022" folder (Should be in your documents).
 Within this folder create a "Libraries" folder, and create 3 more folders in "Libraries";
 - glm
 - glfw
-- stb  
+- stb
 
 Place all relevent files in these three folders from the above dependancies.
 
 <details>
 <summary>View of What Folders Should Look Like</summary>
-
 ![Shows the glfw library](./ImagesForMarkdown/GLFWLibrary.png)
 
 ![Shows the glm library](./ImagesForMarkdown/GLMLibrary.png)
