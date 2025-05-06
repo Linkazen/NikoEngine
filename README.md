@@ -4,3 +4,4 @@ NikoEngine is a little project that I'm doing in my spare time, built from the g
 - VulkanSDK 1.4.309.0
 - GLM 1.0.1
 - glfw-3.4
+- stb - single-file public domain (or MIT licensed) libraries for C/C++
