@@ -21,6 +21,7 @@ Place all relevent files in these three folders from the above dependancies.
 
 <details>
 <summary>View of What Folders Should Look Like</summary>
+    
 ![Shows the glfw library](./ImagesForMarkdown/GLFWLibrary.png)
 
 ![Shows the glm library](./ImagesForMarkdown/GLMLibrary.png)
