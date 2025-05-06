@@ -144,51 +144,51 @@ public:
     }
 
 private:
-    GLFWwindow* window;
-    VkInstance instance;
-    VkDebugUtilsMessengerEXT debugMessenger;
+    GLFWwindow* window = nullptr;
+    VkInstance instance = {};
+    VkDebugUtilsMessengerEXT debugMessenger = {};
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-    VkQueue graphicsQueue;
-    VkDevice device;
-    VkSurfaceKHR surface;
-    VkQueue presentQueue;
-    VkSwapchainKHR swapChain;
+    VkQueue graphicsQueue = {};
+    VkDevice device = {};
+    VkSurfaceKHR surface = {};
+    VkQueue presentQueue = {};
+    VkSwapchainKHR swapChain = {};
     std::vector<VkImage> swapChainImages;
-    VkFormat swapChainImageFormat;
-    VkExtent2D swapChainExtent;
+    VkFormat swapChainImageFormat = {};
+    VkExtent2D swapChainExtent = {};
     std::vector<VkImageView> swapChainImageViews;
-    VkRenderPass renderPass;
+    VkRenderPass renderPass = {};
 
-    VkDescriptorSetLayout descriptorSetLayout;
-    VkPipelineLayout pipelineLayout;
-    VkPipeline graphicsPipeline;
+    VkDescriptorSetLayout descriptorSetLayout = {};
+    VkPipelineLayout pipelineLayout = {};
+    VkPipeline graphicsPipeline = {};
     std::vector<VkFramebuffer> swapChainFramebuffers;
-    VkCommandPool commandPool;
+    VkCommandPool commandPool = {};
     std::vector<VkCommandBuffer> commandBuffers;
 
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;
     std::vector<VkFence> inFlightFences;
 
-    VkBuffer vertexBuffer;
-    VkDeviceMemory vertexBufferMemory;
-    VkBuffer indexBuffer;
-    VkDeviceMemory indexBufferMemory;
+    VkBuffer vertexBuffer = {};
+    VkDeviceMemory vertexBufferMemory = {};
+    VkBuffer indexBuffer = {};
+    VkDeviceMemory indexBufferMemory = {};
 
     std::vector<VkBuffer> uniformBuffers;
     std::vector<VkDeviceMemory> uniformBuffersMemory;
     std::vector<void*> uniformBuffersMapped;
-    VkDescriptorPool descriptorPool;
+    VkDescriptorPool descriptorPool = {};
     std::vector<VkDescriptorSet> descriptorSets;
 
-    VkImageView textureImageView;
-    VkSampler textureSampler;
-    VkImage textureImage;
-    VkDeviceMemory textureImageMemory;
+    VkImageView textureImageView = {};
+    VkSampler textureSampler = {};
+    VkImage textureImage = {};
+    VkDeviceMemory textureImageMemory = {};
 
-    VkImage depthImage;
-    VkDeviceMemory depthImageMemory;
-    VkImageView depthImageView;
+    VkImage depthImage = {};
+    VkDeviceMemory depthImageMemory = {};
+    VkImageView depthImageView = {};
 
     uint32_t currentFrame = 0;
     bool framebufferResized = false;
@@ -217,7 +217,7 @@ private:
     };
 
     struct SwapChainSupportDetails {
-        VkSurfaceCapabilitiesKHR capabilities;
+        VkSurfaceCapabilitiesKHR capabilities = {};
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
     };
