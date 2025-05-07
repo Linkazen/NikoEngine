@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer\VulkanRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\compile.bat" />
@@ -148,6 +149,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\thefella.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Renderer\variables.h" />
+    <ClInclude Include="Renderer\VulkanRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
