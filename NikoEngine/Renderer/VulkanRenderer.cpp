@@ -1567,6 +1567,10 @@ inline void VulkanRenderer::mainLoop() {
 		if (state == GLFW_PRESS && !rotatedThisFrame) {
 			rotatedThisFrame = true;
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			xpos = 0;
+			oldxpos = 0;
+			ypos = 0;
+			oldypos = 0;
 
 			if (glfwRawMouseMotionSupported()) {
 				glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
@@ -1577,8 +1581,7 @@ inline void VulkanRenderer::mainLoop() {
 			glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
 			rotatedThisFrame = false;
 		}
-
-		if (rotatedThisFrame == true) {
+		else if (rotatedThisFrame == true) {
 			static auto startTime = std::chrono::high_resolution_clock::now();
 
 			auto currentTime = std::chrono::high_resolution_clock::now();
@@ -1587,15 +1590,19 @@ inline void VulkanRenderer::mainLoop() {
 			glm::vec2 diff(0);
 
 			glfwGetCursorPos(window, &xpos, &ypos);
-			diff.x = xpos - oldxpos;
-			diff.y = ypos - oldypos;
 
-			primCamera.Rotate(glm::radians(diff.x * time), glm::vec3(0, 1, 0));
-			primCamera.Rotate(glm::radians(diff.y * time), glm::vec3(1,0,0));
+			if (oldxpos != 0 && oldypos != 0) {
+				diff.x = xpos - oldxpos;
+				diff.y = ypos - oldypos;
+
+				primCamera.Rotate(glm::radians(diff.x * time * 0.3f), glm::vec3(0, 1, 0));
+				primCamera.Rotate(glm::radians(diff.y * time * 0.3f), glm::vec3(1,0,0));
+			}
 
 			oldxpos = xpos;
 			oldypos = ypos;
 		}
+
 
 		drawFrame();
 	}
