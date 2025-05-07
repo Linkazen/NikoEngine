@@ -188,6 +188,9 @@ inline void VulkanRenderer::recreateSwapChain() {
 		glfwWaitEvents();
 	}
 
+	primCamera.ubo.proj = glm::perspective(glm::radians(90.0f), width / (float)height, 0.1f, 100.0f);
+	primCamera.ubo.proj[1][1] *= -1;
+
 	vkDeviceWaitIdle(device);
 
 	cleanupSwapChain();
@@ -308,6 +311,9 @@ inline void VulkanRenderer::initVulkan() {
 	createTextureImage();
 	createTextureImageView();
 	createTextureSampler();
+
+	primCamera.ubo.proj = glm::perspective(glm::radians(90.0f), WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+	primCamera.ubo.proj[1][1] *= -1;
 
 
 	//loadModel();
@@ -1595,8 +1601,9 @@ inline void VulkanRenderer::mainLoop() {
 				diff.x = xpos - oldxpos;
 				diff.y = ypos - oldypos;
 
-				primCamera.Rotate(glm::radians(diff.x * time * 0.3f), glm::vec3(0, 1, 0));
+
 				primCamera.Rotate(glm::radians(diff.y * time * 0.3f), glm::vec3(1,0,0));
+				primCamera.Rotate(glm::radians(diff.x * time * 0.3f), glm::vec3(0, 1, 0));
 			}
 
 			oldxpos = xpos;

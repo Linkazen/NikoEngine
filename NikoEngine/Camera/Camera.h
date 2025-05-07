@@ -17,11 +17,11 @@ class Camera
 public:
 	Camera() {
 		mTranslation = glm::vec3(0,0,-5);
-		mRotation = glm::vec3(0, 0, 0);
+		mRotation = glm::quat(glm::vec3(0));
 		mScale = glm::vec3(1);
 
 		ubo.model = glm::identity<glm::mat4>();
-		ubo.view = glm::toMat4(glm::quat(mRotation)) * glm::translate(glm::mat4(1.f), mTranslation);
+		ubo.view = glm::toMat4(mRotation) * glm::translate(glm::mat4(1.f), mTranslation);
 		ubo.proj = glm::perspective(glm::radians(90.0f), 800.f / (float)600.f, 0.1f, 100.0f);
 
 		ubo.proj[1][1] *= -1;
@@ -30,17 +30,16 @@ public:
 	};
 
 	void Rotate(float angle, glm::vec3 axis) {
-		mRotation += (angle * axis);
-
 		glm::mat4 cameraTranslation = glm::translate(glm::mat4(1.f), mTranslation);
+		mRotation = glm::rotate(mRotation, angle, axis * mRotation);
 
-		ubo.view = glm::toMat4(glm::quat(mRotation)) * cameraTranslation;
+		ubo.view = glm::toMat4(mRotation) * cameraTranslation;
 	}
 
 	UniformBufferObject ubo;
 
 	glm::vec3 mTranslation;
-	glm::vec3 mRotation;
+	glm::quat mRotation;
 	glm::vec3 mScale;
 	float fov;
 };
