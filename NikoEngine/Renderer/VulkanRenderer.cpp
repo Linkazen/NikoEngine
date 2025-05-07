@@ -1552,16 +1552,6 @@ inline void VulkanRenderer::setupDebugMessenger() {
 }
 
 inline void VulkanRenderer::updateUnformBuffer(uint32_t currentImage) {
-	/*UniformBufferObject ubo{};
-	ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	ubo.proj = glm::perspective(glm::radians(90.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
-
-	ubo.proj[1][1] *= -1;*/
-
-
-
-
 	memcpy(uniformBuffersMapped[currentImage], &primCamera.ubo, sizeof(primCamera.ubo));
 }
 
@@ -1588,8 +1578,6 @@ inline void VulkanRenderer::mainLoop() {
 			rotatedThisFrame = false;
 		}
 		else if (rotatedThisFrame == true) {
-			static auto startTime = std::chrono::high_resolution_clock::now();
-
 			auto currentTime = std::chrono::high_resolution_clock::now();
 			float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
@@ -1601,13 +1589,35 @@ inline void VulkanRenderer::mainLoop() {
 				diff.x = xpos - oldxpos;
 				diff.y = ypos - oldypos;
 
-
-				primCamera.Rotate(glm::radians(diff.y * time * 0.3f), glm::vec3(1,0,0));
-				primCamera.Rotate(glm::radians(diff.x * time * 0.3f), glm::vec3(0, 1, 0));
+				primCamera.Rotate(glm::radians(diff.y * time * 20.f), glm::vec3(1, 0, 0));
+				primCamera.Rotate(glm::radians(diff.x * time * 20.f), glm::vec3(0, 1, 0));
 			}
 
 			oldxpos = xpos;
 			oldypos = ypos;
+
+			std::cout << time << "\n";
+
+			// For freecam movement
+			glm::vec3 trans = glm::vec3(0);
+			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+				trans += glm::vec3(0, 0, 1);
+			}
+			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+				trans += glm::vec3(0, 0, -1);
+			}
+			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+				trans += glm::vec3(1, 0, 0);
+			}
+			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+				trans += glm::vec3(-1, 0, 0);
+			}
+
+			if (trans != glm::vec3(0)) {
+				primCamera.mTranslation += glm::normalize(trans) * primCamera.mRotation * time;
+			}
+
+			startTime = currentTime;
 		}
 
 

@@ -98,6 +98,7 @@ private:
     Camera primCamera;
     double oldxpos = 0.f;
     double oldypos = 0.f;
+    std::chrono::steady_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
     double xpos = 0.f;
     double ypos = 0.f;
