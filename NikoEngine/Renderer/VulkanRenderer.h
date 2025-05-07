@@ -1,16 +1,5 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtx/hash.hpp>
-
-
 #include <chrono>
 #include <iostream>
 #include <stdexcept>
@@ -20,10 +9,25 @@
 #include <set>
 #include <algorithm> // Necessary for std::clamp
 #include <fstream>
-#include <array>
 #include <unordered_map>
 
 #include "variables.h"
+#include "Transform.h"
+
+struct QueueFamilyIndices {
+    std::optional<uint32_t> graphicsFamily;
+    std::optional<uint32_t> presentFamily;
+
+    bool isComplete() {
+        return graphicsFamily.has_value() && presentFamily.has_value();
+    };
+};
+
+struct SwapChainSupportDetails {
+    VkSurfaceCapabilitiesKHR capabilities = {};
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> presentModes;
+};
 
 class VulkanRenderer
 {
@@ -58,13 +62,14 @@ private:
     std::vector<VkSemaphore> renderFinishedSemaphores;
     std::vector<VkFence> inFlightFences;
 
-    std::vector<Vertex> vertices;
-    std::vector<uint32_t> indices;
+    /*std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;*/
+    std::vector<Niko::Object> objects = {};
 
-    VkBuffer vertexBuffer = {};
+    /*VkBuffer vertexBuffer = {};
     VkDeviceMemory vertexBufferMemory = {};
     VkBuffer indexBuffer = {};
-    VkDeviceMemory indexBufferMemory = {};
+    VkDeviceMemory indexBufferMemory = {};*/
 
     std::vector<VkBuffer> uniformBuffers;
     std::vector<VkDeviceMemory> uniformBuffersMemory;
@@ -127,8 +132,6 @@ private:
 
     void initVulkan();
 
-    void loadModel();
-
     bool hasStencilComponent(VkFormat format);
 
     VkFormat findDepthFormat();
@@ -168,9 +171,9 @@ private:
 
     void createDescriptorSetLayout();
 
-    void createIndexBuffer();
+    void createIndexBuffer(Niko::Object& obj);
 
-    void createVertexBuffer();
+    void createVertexBuffer(Niko::Object& obj);
 
     void createSyncObjects();
 

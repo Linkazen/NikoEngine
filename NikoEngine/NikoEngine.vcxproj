@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer\Transform.cpp" />
     <ClCompile Include="Renderer\VulkanRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +152,8 @@
     <Image Include="textures\thefella.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Renderer\Primative.h" />
+    <ClInclude Include="Renderer\Transform.h" />
     <ClInclude Include="Renderer\variables.h" />
     <ClInclude Include="Renderer\VulkanRenderer.h" />
   </ItemGroup>
