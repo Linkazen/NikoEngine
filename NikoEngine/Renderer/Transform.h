@@ -6,7 +6,7 @@
 
 namespace Niko {
 	struct Transform {
-		glm::vec3 translation;
+		glm::vec3 translation = glm::vec3(0);
 		glm::vec3 rotation;
 		glm::vec3 scale;
 
@@ -39,6 +39,5 @@ namespace Niko {
 
 		VkBuffer indexBuffer = {};
 		VkDeviceMemory indexBufferMemory = {};
-
 	};
 }
