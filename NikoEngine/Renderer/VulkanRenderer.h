@@ -13,6 +13,7 @@
 
 #include "variables.h"
 #include "Transform.h"
+#include "../Camera/Camera.h"
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -93,6 +94,15 @@ private:
 
     uint32_t currentFrame = 0;
     bool framebufferResized = false;
+
+    Camera primCamera;
+    double oldxpos = 0.f;
+    double oldypos = 0.f;
+
+    double xpos = 0.f;
+    double ypos = 0.f;
+    bool rotatedThisFrame = false;
+
 
     VkShaderModule createShaderModule(const std::vector<char>& code);
 

@@ -52,13 +52,6 @@ struct Vertex {
     }
 };
 
-struct UniformBufferObject {
-    // Look into alignas https://docs.vulkan.org/tutorial/latest/05_Uniform_buffers/01_Descriptor_pool_and_sets.html
-    glm::mat4 model;
-    glm::mat4 view;
-    glm::mat4 proj;
-};
-
 
 namespace std {
     template<> struct hash<Vertex> {

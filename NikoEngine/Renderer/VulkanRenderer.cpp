@@ -309,11 +309,13 @@ inline void VulkanRenderer::initVulkan() {
 	createTextureImageView();
 	createTextureSampler();
 
+
 	//loadModel();
 	// Load an object method
 
 	Niko::Object obj1;
-	obj1.mesh.loadObj("assets/models/viking_room.obj");
+	obj1.mesh.loadObj("./assets/models/viking_room.obj");
+	//obj1.mesh.LoadCube(obj1.mesh);
 	obj1.transform.translation = glm::vec3(0.5f, 0.5f, 0.5f);
 	objects.push_back(obj1);
 	obj1.transform.translation = glm::vec3(1, 1, 1);
@@ -331,6 +333,7 @@ inline void VulkanRenderer::initVulkan() {
 
 	createCommandBuffers();
 	createSyncObjects();
+
 }
 
 inline bool VulkanRenderer::hasStencilComponent(VkFormat format) {
@@ -930,6 +933,7 @@ inline void VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, u
 
 	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+	// Draws all objects in the object vector
 	for (auto& obj : objects) {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
@@ -1542,19 +1546,57 @@ inline void VulkanRenderer::setupDebugMessenger() {
 }
 
 inline void VulkanRenderer::updateUnformBuffer(uint32_t currentImage) {
-	UniformBufferObject ubo{};
+	/*UniformBufferObject ubo{};
 	ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+	ubo.proj = glm::perspective(glm::radians(90.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
 
-	ubo.proj[1][1] *= -1;
+	ubo.proj[1][1] *= -1;*/
 
-	memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+
+
+
+	memcpy(uniformBuffersMapped[currentImage], &primCamera.ubo, sizeof(primCamera.ubo));
 }
 
 inline void VulkanRenderer::mainLoop() {
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+
+		int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+		if (state == GLFW_PRESS && !rotatedThisFrame) {
+			rotatedThisFrame = true;
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+			if (glfwRawMouseMotionSupported()) {
+				glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+			}
+		}
+		else if (state == GLFW_RELEASE) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+			rotatedThisFrame = false;
+		}
+
+		if (rotatedThisFrame == true) {
+			static auto startTime = std::chrono::high_resolution_clock::now();
+
+			auto currentTime = std::chrono::high_resolution_clock::now();
+			float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+			glm::vec2 diff(0);
+
+			glfwGetCursorPos(window, &xpos, &ypos);
+			diff.x = xpos - oldxpos;
+			diff.y = ypos - oldypos;
+
+			primCamera.Rotate(glm::radians(diff.x * time), glm::vec3(0, 1, 0));
+			primCamera.Rotate(glm::radians(diff.y * time), glm::vec3(1,0,0));
+
+			oldxpos = xpos;
+			oldypos = ypos;
+		}
+
 		drawFrame();
 	}
 
