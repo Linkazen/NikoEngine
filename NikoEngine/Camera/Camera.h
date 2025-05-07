@@ -16,7 +16,7 @@ class Camera
 {
 public:
 	Camera() {
-		mTranslation = glm::vec3(0,0,-5);
+		mTranslation = glm::vec3(0,0,0);
 		mRotation = glm::quat(glm::vec3(0));
 		mScale = glm::vec3(1);
 
