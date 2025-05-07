@@ -322,7 +322,7 @@ inline void VulkanRenderer::initVulkan() {
 	Niko::Object obj1;
 	obj1.mesh.loadObj("./assets/models/viking_room.obj");
 	//obj1.mesh.LoadCube(obj1.mesh);
-	obj1.transform.translation = glm::vec3(1.f, 0, 0);
+	obj1.transform.translation = glm::vec3(1, 0, 0);
 	objects.push_back(obj1);
 	obj1.transform.translation = glm::vec3(0, 1, 0);
 	objects.push_back(obj1);
@@ -1591,7 +1591,7 @@ inline void VulkanRenderer::mainLoop() {
 				diff.x = xpos - oldxpos;
 				diff.y = ypos - oldypos;
 
-				primCamera.Rotate(glm::radians(diff.y * time * 600.f), glm::vec3(1, 0, 0));
+				primCamera.Rotate(glm::radians(-diff.y * time * 600.f), glm::vec3(1, 0, 0));
 				primCamera.Rotate(glm::radians(diff.x * time * 600.f), glm::vec3(0, 1, 0));
 			}
 

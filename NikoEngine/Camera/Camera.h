@@ -20,8 +20,8 @@ public:
 		mRotation = glm::quat(glm::vec3(0));
 		mScale = glm::vec3(1);
 
-		ubo.model = glm::identity<glm::mat4>();
-		ubo.view = glm::toMat4(mRotation) * glm::translate(glm::mat4(1.f), mTranslation);
+		ubo.model = glm::mat4(1);
+		ubo.view = glm::lookAt(mTranslation, mTranslation + (glm::vec3(0, 0, 1) * mRotation), glm::vec3(0,1,0));
 		ubo.proj = glm::perspective(glm::radians(90.0f), 800.f / (float)600.f, 0.1f, 100.0f);
 
 		ubo.proj[1][1] *= -1;
@@ -30,10 +30,9 @@ public:
 	};
 
 	void Rotate(float angle, glm::vec3 axis) {
-		glm::mat4 cameraTranslation = glm::translate(glm::mat4(1.f), mTranslation);
-		mRotation = glm::rotate(mRotation, angle, axis * mRotation);
+		mRotation = glm::normalize(glm::rotate(mRotation, angle, axis * mRotation));
 
-		ubo.view = glm::toMat4(mRotation) * cameraTranslation;
+		ubo.view = glm::lookAt(mTranslation, mTranslation + (glm::vec3(0, 0, 1) * mRotation), glm::vec3(0, 1, 0));
 	}
 
 	UniformBufferObject ubo;
