@@ -17,11 +17,11 @@ class Camera
 public:
 	Camera() {
 		mTranslation = glm::vec3(0,0,0);
-		mRotation = glm::quat(glm::vec3(0));
 		mScale = glm::vec3(1);
+		SetDirections();
 
 		ubo.model = glm::mat4(1);
-		ubo.view = glm::lookAt(mTranslation, mTranslation + (glm::vec3(0, 0, 1) * mRotation), glm::vec3(0,1,0));
+		ubo.view = glm::lookAt(mTranslation, mTranslation + (glm::vec3(0, 0, 1) * forward), glm::vec3(0,1,0));
 		ubo.proj = glm::perspective(glm::radians(90.0f), 800.f / (float)600.f, 0.1f, 100.0f);
 
 		ubo.proj[1][1] *= -1;
@@ -29,17 +29,75 @@ public:
 		fov = glm::radians(90.f);
 	};
 
-	void Rotate(float angle, glm::vec3 axis) {
-		mRotation = glm::normalize(glm::rotate(mRotation, angle, axis * mRotation));
+	/*void Rotate(float angle, glm::vec3 axis) {
+		mQuatRotation = glm::normalize(glm::rotate(mQuatRotation, angle, axis * mQuatRotation));
 
-		ubo.view = glm::lookAt(mTranslation, mTranslation + (glm::vec3(0, 0, 1) * mRotation), glm::vec3(0, 1, 0));
+		SetViewMatrix();
+	}
+
+	void Rotate(glm::quat qRot) {
+		mQuatRotation *= qRot;
+
+		SetViewMatrix();
+	}*/
+
+	// Rotates using euler angles in rotation
+	void RotateEuler(glm::vec3 rotation) {
+		mRotation += rotation;
+
+		if (mRotation.x > glm::pi<float>()) {
+			mRotation.x -= glm::pi<float>() * 2;
+		}
+		else if (mRotation.x < -glm::pi<float>()) {
+			mRotation.x += glm::pi<float>() * 2;
+		}
+
+		if (mRotation.y > glm::pi<float>()) {
+			mRotation.y -= glm::pi<float>() * 2;
+		}
+		else if (mRotation.y < -glm::pi<float>()) {
+			mRotation.y += glm::pi<float>() * 2;
+
+		}
+
+		if (mRotation.z > glm::pi<float>()) {
+			mRotation.z -= glm::pi<float>() * 2;
+		}
+		else if (mRotation.z < -glm::pi<float>()) {
+			mRotation.z += glm::pi<float>() * 2;
+		}
+
+		SetDirections();
+		SetViewMatrix();
+	}
+
+	void SetViewMatrix() {
+		ubo.view = glm::lookAt(mTranslation, mTranslation + forward, glm::vec3(0, 1, 0));
+	}
+
+	void SetDirections() {
+		forward.x = cos(mRotation.x) * sin(mRotation.y);
+		forward.y = -sin(mRotation.x);
+		forward.z = cos(mRotation.x) * cos(mRotation.y);
+
+		right.x = cos(mRotation.y);
+		right.y = 0;
+		right.z = -sin(mRotation.y);
+
+		up = cross(forward, right);
 	}
 
 	UniformBufferObject ubo;
 
 	glm::vec3 mTranslation;
-	glm::quat mRotation;
+	glm::vec3 mRotation;
 	glm::vec3 mScale;
 	float fov;
+
+	glm::vec3 forward;
+	glm::vec3 right;
+	glm::vec3 up;
+
+	//glm::quat mQuatRotation;
 };
 

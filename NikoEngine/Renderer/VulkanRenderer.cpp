@@ -1588,11 +1588,10 @@ inline void VulkanRenderer::mainLoop() {
 			glfwGetCursorPos(window, &xpos, &ypos);
 
 			if (oldxpos != 0 && oldypos != 0) {
-				diff.x = xpos - oldxpos;
-				diff.y = ypos - oldypos;
+				diff.y = -(xpos - oldxpos);
+				diff.x = ypos - oldypos;
 
-				primCamera.Rotate(glm::radians(-diff.y * time * 600.f), glm::vec3(1, 0, 0));
-				primCamera.Rotate(glm::radians(diff.x * time * 600.f), glm::vec3(0, 1, 0));
+				primCamera.RotateEuler(glm::vec3(diff * time, 0));
 			}
 
 			oldxpos = xpos;
@@ -1601,25 +1600,25 @@ inline void VulkanRenderer::mainLoop() {
 			// For freecam movement
 			glm::vec3 trans = glm::vec3(0);
 			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-				trans += glm::vec3(0, 0, 1);
+				trans += primCamera.forward;
 			}
 			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-				trans += glm::vec3(0, 0, -1);
+				trans -= primCamera.forward;
 			}
 			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-				trans += glm::vec3(1, 0, 0);
+				trans += primCamera.right;
 			}
 			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-				trans += glm::vec3(-1, 0, 0);
+				trans -= primCamera.right;
 			}
 
 			if (trans != glm::vec3(0)) {
-				primCamera.mTranslation += glm::normalize(trans) * primCamera.mRotation * time;
+				primCamera.mTranslation += glm::normalize(trans) * time;
 			}
 
 			startTime = currentTime;
 		}
-
+		//std::cout << "X: " << primCamera.mRotation.x << " Y: " << primCamera.mRotation.y << " Z: " << primCamera.mRotation.z << "\n";
 
 		drawFrame();
 	}
