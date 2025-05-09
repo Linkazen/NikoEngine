@@ -143,6 +143,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer\Transform.cpp" />
     <ClCompile Include="Renderer\VulkanRenderer.cpp" />
+    <ClCompile Include="Renderer\TimeKeeper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\compile.bat" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Renderer\Transform.h" />
     <ClInclude Include="Renderer\variables.h" />
     <ClInclude Include="Renderer\VulkanRenderer.h" />
+    <ClInclude Include="Renderer\TimeKeeper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

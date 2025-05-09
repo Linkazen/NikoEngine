@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chrono>
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
@@ -14,6 +13,7 @@
 #include "variables.h"
 #include "Transform.h"
 #include "../Camera/Camera.h"
+#include "TimeKeeper.h"
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -36,6 +36,8 @@ public:
     void run();
 
 private:
+    TimeKeeper time;
+
     GLFWwindow* window = nullptr;
     VkInstance instance = {};
     VkDebugUtilsMessengerEXT debugMessenger = {};
@@ -227,6 +229,8 @@ private:
     void setupDebugMessenger();
 
     void updateUnformBuffer(uint32_t currentImage);
+
+    void handleInput();
 
     void mainLoop();
 

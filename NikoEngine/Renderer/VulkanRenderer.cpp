@@ -44,6 +44,7 @@ void VulkanRenderer::run() {
 	// Make sure this isn't inline
 	initWindow();
 	initVulkan();
+	time.Begin();
 	mainLoop();
 	cleanup();
 }
@@ -1557,69 +1558,69 @@ inline void VulkanRenderer::updateUnformBuffer(uint32_t currentImage) {
 	memcpy(uniformBuffersMapped[currentImage], &primCamera.ubo, sizeof(primCamera.ubo));
 }
 
+void VulkanRenderer::handleInput()
+{
+	int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+	if (state == GLFW_PRESS && !rotatedThisFrame) {
+		rotatedThisFrame = true;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		xpos = 0;
+		oldxpos = 0;
+		ypos = 0;
+		oldypos = 0;
+
+		if (glfwRawMouseMotionSupported()) {
+			glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		}
+	}
+	else if (state == GLFW_RELEASE) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+		rotatedThisFrame = false;
+	}
+	else if (rotatedThisFrame == true) {
+
+		glm::vec2 diff(0);
+
+		glfwGetCursorPos(window, &xpos, &ypos);
+
+		if (oldxpos != 0 && oldypos != 0) {
+			diff.y = -(xpos - oldxpos);
+			diff.x = ypos - oldypos;
+
+			primCamera.RotateEuler(glm::vec3(diff * time.DeltaTime(), 0));
+		}
+
+		oldxpos = xpos;
+		oldypos = ypos;
+
+		// For freecam movement
+		glm::vec3 trans = glm::vec3(0);
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			trans += primCamera.forward;
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			trans -= primCamera.forward;
+		}
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			trans += primCamera.right;
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			trans -= primCamera.right;
+		}
+
+		if (trans != glm::vec3(0)) {
+			primCamera.mTranslation += glm::normalize(trans) * time.DeltaTime();
+		}
+	}
+	//std::cout << "X: " << primCamera.mRotation.x << " Y: " << primCamera.mRotation.y << " Z: " << primCamera.mRotation.z << "\n";
+}
+
 inline void VulkanRenderer::mainLoop() {
 	while (!glfwWindowShouldClose(window)) {
+		time.Tick();
 		glfwPollEvents();
-
-		int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
-		if (state == GLFW_PRESS && !rotatedThisFrame) {
-			rotatedThisFrame = true;
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			xpos = 0;
-			oldxpos = 0;
-			ypos = 0;
-			oldypos = 0;
-
-			if (glfwRawMouseMotionSupported()) {
-				glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-			}
-		}
-		else if (state == GLFW_RELEASE) {
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
-			rotatedThisFrame = false;
-		}
-		else if (rotatedThisFrame == true) {
-			auto currentTime = std::chrono::high_resolution_clock::now();
-			float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-			glm::vec2 diff(0);
-
-			glfwGetCursorPos(window, &xpos, &ypos);
-
-			if (oldxpos != 0 && oldypos != 0) {
-				diff.y = -(xpos - oldxpos);
-				diff.x = ypos - oldypos;
-
-				primCamera.RotateEuler(glm::vec3(diff * time, 0));
-			}
-
-			oldxpos = xpos;
-			oldypos = ypos;
-
-			// For freecam movement
-			glm::vec3 trans = glm::vec3(0);
-			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-				trans += primCamera.forward;
-			}
-			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-				trans -= primCamera.forward;
-			}
-			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-				trans += primCamera.right;
-			}
-			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-				trans -= primCamera.right;
-			}
-
-			if (trans != glm::vec3(0)) {
-				primCamera.mTranslation += glm::normalize(trans) * time;
-			}
-
-			startTime = currentTime;
-		}
-		//std::cout << "X: " << primCamera.mRotation.x << " Y: " << primCamera.mRotation.y << " Z: " << primCamera.mRotation.z << "\n";
-
+		handleInput();
 		drawFrame();
 	}
 
