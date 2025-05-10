@@ -269,6 +269,20 @@ inline void VulkanRenderer::initWindow() {
 	window = glfwCreateWindow(WIDTH, HEIGHT, "NikoEngine", nullptr, nullptr);
 	glfwSetWindowUserPointer(window, this);
 	glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+
+	// Handles input init (put this in a new function)
+	Input = new Niko::InputHandler();
+
+	auto KeysInputCallback = [](GLFWwindow* w, int k, int sc, int a, int m) {
+		static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->key_callback(w, k, sc, a, m);
+		};
+
+	auto MouseInputCallback = [](GLFWwindow* w, int k, int a, int m) {
+		static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->mouse_callback(w, k, a, m);
+		};
+
+	glfwSetKeyCallback(window, KeysInputCallback);
+	glfwSetMouseButtonCallback(window, MouseInputCallback);
 }
 
 inline void VulkanRenderer::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
@@ -1560,9 +1574,7 @@ inline void VulkanRenderer::updateUnformBuffer(uint32_t currentImage) {
 
 void VulkanRenderer::handleInput()
 {
-	int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
-	if (state == GLFW_PRESS && !rotatedThisFrame) {
-		rotatedThisFrame = true;
+	if (Input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		xpos = 0;
 		oldxpos = 0;
@@ -1573,12 +1585,12 @@ void VulkanRenderer::handleInput()
 			glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 		}
 	}
-	else if (state == GLFW_RELEASE) {
+	else if (Input->IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
 		rotatedThisFrame = false;
 	}
-	else if (rotatedThisFrame == true) {
+	else if (Input->IsMouseHeld(GLFW_MOUSE_BUTTON_RIGHT)) {
 
 		glm::vec2 diff(0);
 
@@ -1596,24 +1608,24 @@ void VulkanRenderer::handleInput()
 
 		// For freecam movement
 		glm::vec3 trans = glm::vec3(0);
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		if (Input->IsKeyHeld(GLFW_KEY_W) /*glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS*/) {
 			trans += primCamera.forward;
 		}
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		if (Input->IsKeyHeld(GLFW_KEY_S)) {
 			trans -= primCamera.forward;
 		}
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		if (Input->IsKeyHeld(GLFW_KEY_A)) {
 			trans += primCamera.right;
 		}
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		if (Input->IsKeyHeld(GLFW_KEY_D)) {
 			trans -= primCamera.right;
 		}
 
 		if (trans != glm::vec3(0)) {
 			primCamera.mTranslation += glm::normalize(trans) * time.DeltaTime();
+			primCamera.SetViewMatrix();
 		}
 	}
-	//std::cout << "X: " << primCamera.mRotation.x << " Y: " << primCamera.mRotation.y << " Z: " << primCamera.mRotation.z << "\n";
 }
 
 inline void VulkanRenderer::mainLoop() {
@@ -1622,6 +1634,7 @@ inline void VulkanRenderer::mainLoop() {
 		glfwPollEvents();
 		handleInput();
 		drawFrame();
+		Input->update_states();
 	}
 
 	vkDeviceWaitIdle(device);

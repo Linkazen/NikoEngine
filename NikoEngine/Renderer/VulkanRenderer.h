@@ -14,6 +14,7 @@
 #include "Transform.h"
 #include "../Camera/Camera.h"
 #include "TimeKeeper.h"
+#include "InputHandler.h"
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -34,6 +35,7 @@ class VulkanRenderer
 {
 public:
     void run();
+    Niko::InputHandler* Input;
 
 private:
     TimeKeeper time;
@@ -65,14 +67,7 @@ private:
     std::vector<VkSemaphore> renderFinishedSemaphores;
     std::vector<VkFence> inFlightFences;
 
-    /*std::vector<Vertex> vertices;
-    std::vector<uint32_t> indices;*/
     std::vector<Niko::Object> objects = {};
-
-    /*VkBuffer vertexBuffer = {};
-    VkDeviceMemory vertexBufferMemory = {};
-    VkBuffer indexBuffer = {};
-    VkDeviceMemory indexBufferMemory = {};*/
 
     std::vector<VkBuffer> uniformBuffers;
     std::vector<VkDeviceMemory> uniformBuffersMemory;
@@ -100,7 +95,6 @@ private:
     Camera primCamera;
     double oldxpos = 0.f;
     double oldypos = 0.f;
-    std::chrono::steady_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
     double xpos = 0.f;
     double ypos = 0.f;

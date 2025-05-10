@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Renderer\InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer\Transform.cpp" />
     <ClCompile Include="Renderer\VulkanRenderer.cpp" />
@@ -155,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Renderer\InputHandler.h" />
     <ClInclude Include="Renderer\Primative.h" />
     <ClInclude Include="Renderer\Transform.h" />
     <ClInclude Include="Renderer\variables.h" />
