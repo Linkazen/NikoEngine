@@ -7,8 +7,8 @@
 namespace Niko {
 	struct Transform {
 		glm::vec3 translation = glm::vec3(0);
-		glm::vec3 rotation;
-		glm::vec3 scale;
+		glm::vec3 rotation = glm::vec3(0);
+		glm::vec3 scale = glm::vec3(0);
 
 		Transform() = default;
 	};
@@ -74,7 +74,7 @@ namespace Niko {
 		Transform transform;
 		Mesh mesh;
 
-		VkBuffer vertexBuffer;
+		VkBuffer vertexBuffer = {};
 		VkDeviceMemory vertexBufferMemory = {};
 
 		VkBuffer indexBuffer = {};

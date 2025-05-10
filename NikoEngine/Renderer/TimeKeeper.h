@@ -29,5 +29,5 @@ private:
 	std::chrono::steady_clock::time_point mOldTime;
 	std::chrono::steady_clock::time_point mCurrTime;
 
-	float mDeltaTime;
+	float mDeltaTime = 0.f;
 };

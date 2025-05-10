@@ -10,6 +10,11 @@
 #include <fstream>
 #include <unordered_map>
 
+// ImGui Includes
+#include <backends/imgui_impl_vulkan.h>
+#include <backends/imgui_impl_glfw.h>
+#include <misc/cpp/imgui_stdlib.h>
+
 #include "variables.h"
 #include "Transform.h"
 #include "../Camera/Camera.h"
@@ -34,11 +39,18 @@ struct SwapChainSupportDetails {
 class VulkanRenderer
 {
 public:
+    void init();
     void run();
-    Niko::InputHandler* Input;
+    void cleanup();
+
+    GLFWwindow* GetWindow() {
+        return window;
+    }
+
+    Niko::InputHandler* Input = nullptr;
 
 private:
-    TimeKeeper time;
+    TimeKeeper time = {};
 
     GLFWwindow* window = nullptr;
     VkInstance instance = {};
@@ -73,6 +85,7 @@ private:
     std::vector<VkDeviceMemory> uniformBuffersMemory;
     std::vector<void*> uniformBuffersMapped;
     VkDescriptorPool descriptorPool = {};
+    VkDescriptorPool descriptorPoolImGui = {};
     std::vector<VkDescriptorSet> descriptorSets;
 
     VkImageView textureImageView = {};
@@ -91,6 +104,8 @@ private:
 
     uint32_t currentFrame = 0;
     bool framebufferResized = false;
+
+    VkPipelineCache pipelineCache = VK_NULL_HANDLE;
 
     Camera primCamera;
     double oldxpos = 0.f;
@@ -226,10 +241,6 @@ private:
 
     void handleInput();
 
-    void mainLoop();
-
     void drawFrame();
-
-    void cleanup();
 };
 

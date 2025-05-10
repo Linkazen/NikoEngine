@@ -40,13 +40,46 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 	}
 }
 
-void VulkanRenderer::run() {
-	// Make sure this isn't inline
+void VulkanRenderer::init()
+{
 	initWindow();
 	initVulkan();
+
+	// ImGui Setup
+	// Setup Platform/Renderer backends
+	ImGui_ImplVulkan_InitInfo init_info = {};
+	init_info.Instance = instance;
+	init_info.PhysicalDevice = physicalDevice;
+	init_info.Device = device;
+	init_info.QueueFamily = findQueueFamilies(physicalDevice).presentFamily.value();
+	init_info.Queue = presentQueue;
+	init_info.PipelineCache = pipelineCache;
+	init_info.DescriptorPool = descriptorPoolImGui;
+	init_info.Subpass = 0;
+	init_info.MinImageCount = 2;
+	init_info.ImageCount = 2;
+	init_info.MSAASamples = msaaSamples;
+	init_info.RenderPass = renderPass;
+	//init_info.Allocator = ;
+	//init_info.CheckVkResultFn = check_vk_result;
+	ImGui_ImplVulkan_Init(&init_info);
+	
 	time.Begin();
-	mainLoop();
-	cleanup();
+}
+
+void VulkanRenderer::run() {
+	time.Tick();
+	glfwPollEvents();
+
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::ShowDemoWindow(); // Show demo window! :)
+
+	handleInput();
+
+	drawFrame();
+	Input->update_states();
 }
 
 inline VkShaderModule VulkanRenderer::createShaderModule(const std::vector<char>& code) {
@@ -283,6 +316,8 @@ inline void VulkanRenderer::initWindow() {
 
 	glfwSetKeyCallback(window, KeysInputCallback);
 	glfwSetMouseButtonCallback(window, MouseInputCallback);
+
+	ImGui_ImplGlfw_InitForVulkan(window, true);
 }
 
 inline void VulkanRenderer::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
@@ -355,6 +390,8 @@ inline void VulkanRenderer::initVulkan() {
 	createDescriptorSets();
 
 	createCommandBuffers();
+
+
 	createSyncObjects();
 
 }
@@ -805,6 +842,23 @@ inline void VulkanRenderer::createDescriptorPool() {
 	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool!");
 	}
+
+	// Creates the imgui descriptor pool
+	VkDescriptorPoolSize pool_sizes[] =
+	{
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE },
+	};
+	VkDescriptorPoolCreateInfo pool_info = {};
+	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+	pool_info.maxSets = 0;
+	for (VkDescriptorPoolSize& pool_size : pool_sizes)
+		pool_info.maxSets += pool_size.descriptorCount;
+	pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
+	pool_info.pPoolSizes = pool_sizes;
+	if (vkCreateDescriptorPool(device, &pool_info, nullptr, &descriptorPoolImGui)) {
+		throw std::runtime_error("Failed to create ImGui descriptor pool!");
+	}
 }
 
 inline void VulkanRenderer::createUniformBuffers() {
@@ -985,6 +1039,9 @@ inline void VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, u
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(obj.mesh.indices.size()), 1, 0, 0, 0);
 	}
+
+	ImGui::Render();
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[currentFrame]);
 
 	vkCmdEndRenderPass(commandBuffers[currentFrame]);
 
@@ -1592,7 +1649,7 @@ void VulkanRenderer::handleInput()
 	}
 	else if (Input->IsMouseHeld(GLFW_MOUSE_BUTTON_RIGHT)) {
 
-		glm::vec2 diff(0);
+		glm::dvec2 diff(0);
 
 		glfwGetCursorPos(window, &xpos, &ypos);
 
@@ -1600,7 +1657,7 @@ void VulkanRenderer::handleInput()
 			diff.y = -(xpos - oldxpos);
 			diff.x = ypos - oldypos;
 
-			primCamera.RotateEuler(glm::vec3(diff * time.DeltaTime(), 0));
+			primCamera.RotateEuler(glm::vec3(diff * (double)time.DeltaTime(), 0));
 		}
 
 		oldxpos = xpos;
@@ -1626,18 +1683,6 @@ void VulkanRenderer::handleInput()
 			primCamera.SetViewMatrix();
 		}
 	}
-}
-
-inline void VulkanRenderer::mainLoop() {
-	while (!glfwWindowShouldClose(window)) {
-		time.Tick();
-		glfwPollEvents();
-		handleInput();
-		drawFrame();
-		Input->update_states();
-	}
-
-	vkDeviceWaitIdle(device);
 }
 
 inline void VulkanRenderer::drawFrame() {
@@ -1707,7 +1752,13 @@ inline void VulkanRenderer::drawFrame() {
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-inline void VulkanRenderer::cleanup() {
+void VulkanRenderer::cleanup() {
+	vkDeviceWaitIdle(device);
+
+	ImGui_ImplVulkan_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	cleanupSwapChain();
 
 	vkDestroySampler(device, textureSampler, nullptr);

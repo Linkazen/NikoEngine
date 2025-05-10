@@ -140,6 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Libraries\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Libraries\imgui\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Libraries\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="Renderer\InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer\Transform.cpp" />
@@ -147,6 +155,7 @@
     <ClCompile Include="Renderer\TimeKeeper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Libraries\imgui\misc\debuggers\imgui.natstepfilter" />
     <None Include="shaders\compile.bat" />
     <None Include="shaders\shader.frag" />
     <None Include="shaders\shader.vert" />
@@ -156,12 +165,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Libraries\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="Libraries\imgui\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="Libraries\imgui\imconfig.h" />
+    <ClInclude Include="Libraries\imgui\imgui.h" />
+    <ClInclude Include="Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="Libraries\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Renderer\InputHandler.h" />
     <ClInclude Include="Renderer\Primative.h" />
     <ClInclude Include="Renderer\Transform.h" />
     <ClInclude Include="Renderer\variables.h" />
     <ClInclude Include="Renderer\VulkanRenderer.h" />
     <ClInclude Include="Renderer\TimeKeeper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Libraries\imgui\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
