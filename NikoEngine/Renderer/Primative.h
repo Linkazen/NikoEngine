@@ -13,9 +13,23 @@
 
 
 struct Vertex {
-    glm::vec3 pos;
+    glm::vec4 pos;
     glm::vec3 color;
     glm::vec2 texCoord;
+
+    Vertex() {
+
+    }
+    Vertex(glm::vec4 mPos, glm::vec3 mCol, glm::vec2 mTexcoord) {
+        pos = mPos;
+        color = mCol;
+        texCoord = mTexcoord;
+    }
+    Vertex(glm::vec3 mPos, glm::vec3 mCol, glm::vec2 mTexcoord) {
+        pos = glm::vec4(mPos, 1);
+        color = mCol;
+        texCoord = mTexcoord;
+    }
 
     static VkVertexInputBindingDescription getBindingDescription() {
         VkVertexInputBindingDescription bindingDescription{};
@@ -31,7 +45,7 @@ struct Vertex {
 
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[0].format = VK_FORMAT_R32G32B32A32_SFLOAT;
         attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
         attributeDescriptions[1].binding = 0;

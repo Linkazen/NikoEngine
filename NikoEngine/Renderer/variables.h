@@ -10,8 +10,8 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
+const uint32_t WIDTH = 1280;
+const uint32_t HEIGHT = 720;
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
 //const std::string MODEL_PATH = "assets/models/viking_room.obj";

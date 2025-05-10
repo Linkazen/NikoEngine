@@ -7,7 +7,6 @@ int main() {
     VulkanRenderer app;
 
     try {
-        ImGui::CreateContext();
         // Imgui init in vulkan app
         app.init();
 

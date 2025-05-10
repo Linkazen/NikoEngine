@@ -25,11 +25,12 @@ void Niko::Mesh::loadObj(std::string MODEL_PATH)
 		for (const auto& index : shape.mesh.indices) {
 			Vertex vertex{};
 
-			vertex.pos = {
+			vertex.pos = glm::vec4(
 				attrib.vertices[3 * index.vertex_index + 0],
 				attrib.vertices[3 * index.vertex_index + 1],
-				attrib.vertices[3 * index.vertex_index + 2]
-			};
+				attrib.vertices[3 * index.vertex_index + 2],
+				1
+			);
 
 			vertex.texCoord = {
 				attrib.texcoords[2 * index.texcoord_index + 0],

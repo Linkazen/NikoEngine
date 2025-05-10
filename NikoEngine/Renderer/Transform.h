@@ -8,7 +8,21 @@ namespace Niko {
 	struct Transform {
 		glm::vec3 translation = glm::vec3(0);
 		glm::vec3 rotation = glm::vec3(0);
-		glm::vec3 scale = glm::vec3(0);
+		glm::vec3 scale = glm::vec3(1);
+
+		glm::mat4 mTransform = glm::identity<glm::mat4>();
+
+		void updateTransform() {
+			mTransform = glm::identity<glm::mat4>();
+
+			mTransform = glm::translate(mTransform, translation);
+			mTransform = glm::rotate(mTransform, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+			mTransform = glm::rotate(mTransform, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+			mTransform = glm::rotate(mTransform, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+
+
+			mTransform = glm::scale(mTransform, scale);
+		}
 
 		Transform() = default;
 	};
@@ -66,6 +80,12 @@ namespace Niko {
 		}
 
 		void loadObj(std::string MODEL_PATH);
+
+		VkBuffer vertexBuffer = {};
+		VkDeviceMemory vertexBufferMemory = {};
+
+		VkBuffer indexBuffer = {};
+		VkDeviceMemory indexBufferMemory = {};
 	};
 
 	struct Object {
@@ -73,11 +93,5 @@ namespace Niko {
 
 		Transform transform;
 		Mesh mesh;
-
-		VkBuffer vertexBuffer = {};
-		VkDeviceMemory vertexBufferMemory = {};
-
-		VkBuffer indexBuffer = {};
-		VkDeviceMemory indexBufferMemory = {};
 	};
 }

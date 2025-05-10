@@ -44,25 +44,7 @@ void VulkanRenderer::init()
 {
 	initWindow();
 	initVulkan();
-
-	// ImGui Setup
-	// Setup Platform/Renderer backends
-	ImGui_ImplVulkan_InitInfo init_info = {};
-	init_info.Instance = instance;
-	init_info.PhysicalDevice = physicalDevice;
-	init_info.Device = device;
-	init_info.QueueFamily = findQueueFamilies(physicalDevice).presentFamily.value();
-	init_info.Queue = presentQueue;
-	init_info.PipelineCache = pipelineCache;
-	init_info.DescriptorPool = descriptorPoolImGui;
-	init_info.Subpass = 0;
-	init_info.MinImageCount = 2;
-	init_info.ImageCount = 2;
-	init_info.MSAASamples = msaaSamples;
-	init_info.RenderPass = renderPass;
-	//init_info.Allocator = ;
-	//init_info.CheckVkResultFn = check_vk_result;
-	ImGui_ImplVulkan_Init(&init_info);
+	initImGui();
 	
 	time.Begin();
 }
@@ -74,9 +56,14 @@ void VulkanRenderer::run() {
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::ShowDemoWindow(); // Show demo window! :)
+
+	ImGuiRender();
 
 	handleInput();
+
+	for (auto& obj : objects) {
+		updateVertexBuffer(obj);
+	}
 
 	drawFrame();
 	Input->update_states();
@@ -316,8 +303,6 @@ inline void VulkanRenderer::initWindow() {
 
 	glfwSetKeyCallback(window, KeysInputCallback);
 	glfwSetMouseButtonCallback(window, MouseInputCallback);
-
-	ImGui_ImplGlfw_InitForVulkan(window, true);
 }
 
 inline void VulkanRenderer::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
@@ -394,6 +379,35 @@ inline void VulkanRenderer::initVulkan() {
 
 	createSyncObjects();
 
+}
+
+void VulkanRenderer::initImGui()
+{
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+	ImGui_ImplGlfw_InitForVulkan(window, true);
+
+
+	// ImGui Setup
+	// Setup Platform/Renderer backends
+	ImGui_ImplVulkan_InitInfo init_info = {};
+	init_info.Instance = instance;
+	init_info.PhysicalDevice = physicalDevice;
+	init_info.Device = device;
+	init_info.QueueFamily = findQueueFamilies(physicalDevice).presentFamily.value();
+	init_info.Queue = presentQueue;
+	init_info.PipelineCache = pipelineCache;
+	init_info.DescriptorPool = descriptorPoolImGui;
+	init_info.Subpass = 0;
+	init_info.MinImageCount = 2;
+	init_info.ImageCount = 2;
+	init_info.MSAASamples = msaaSamples;
+	init_info.RenderPass = renderPass;
+	//init_info.Allocator = ;
+	//init_info.CheckVkResultFn = check_vk_result;
+	ImGui_ImplVulkan_Init(&init_info);
 }
 
 inline bool VulkanRenderer::hasStencilComponent(VkFormat format) {
@@ -582,6 +596,24 @@ inline void VulkanRenderer::copyBufferToImage(VkBuffer buffer, VkImage image, ui
 	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
 	endSingleTimeCommands(commandBuffer);
+}
+
+void VulkanRenderer::ImGuiRender()
+{
+	ImGui::Begin("Inspector");
+	
+	uint16_t loop = 0;
+	for (auto& obj : objects) {
+		ImGui::PushID(loop);
+		ImGui::DragFloat3("Translation", &obj.transform.translation.x);
+		ImGui::DragFloat3("Rotation", &obj.transform.rotation.x);
+		ImGui::DragFloat3("Scale", &obj.transform.scale.x);
+		ImGui::PopID();
+		ImGui::Separator();
+		loop++;
+	}
+
+	ImGui::End();
 }
 
 //// INIT VULKAN FUNCTIONS
@@ -914,20 +946,23 @@ inline void VulkanRenderer::createIndexBuffer(Niko::Object& obj) {
 	memcpy(data, obj.mesh.indices.data(), (size_t)bufferSize);
 	vkUnmapMemory(device, stagingBufferMemory);
 
-	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, obj.indexBuffer, obj.indexBufferMemory);
+	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, obj.mesh.indexBuffer, obj.mesh.indexBufferMemory);
 
-	copyBuffer(stagingBuffer, obj.indexBuffer, bufferSize);
+	copyBuffer(stagingBuffer, obj.mesh.indexBuffer, bufferSize);
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
 
 inline void VulkanRenderer::createVertexBuffer(Niko::Object& obj) {
-	for (auto& v : obj.mesh.vertices) {
-		v.pos += obj.transform.translation;
+	std::vector<Vertex> vertices = obj.mesh.vertices;
+	obj.transform.updateTransform();
+
+	for (auto& v : vertices) {
+		v.pos = obj.transform.mTransform * v.pos;
 	}
 
-	VkDeviceSize bufferSize = sizeof(obj.mesh.vertices[0]) * obj.mesh.vertices.size();
+	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -936,12 +971,39 @@ inline void VulkanRenderer::createVertexBuffer(Niko::Object& obj) {
 	// Mapping the buffer memory
 	void* data;
 	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, obj.mesh.vertices.data(), (size_t)bufferSize);
+	memcpy(data, vertices.data(), (size_t)bufferSize);
 	vkUnmapMemory(device, stagingBufferMemory);
 
-	createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, obj.vertexBuffer, obj.vertexBufferMemory);
+	createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, obj.mesh.vertexBuffer, obj.mesh.vertexBufferMemory);
 
-	copyBuffer(stagingBuffer, obj.vertexBuffer, bufferSize);
+	copyBuffer(stagingBuffer, obj.mesh.vertexBuffer, bufferSize);
+
+	vkDestroyBuffer(device, stagingBuffer, nullptr);
+	vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
+void VulkanRenderer::updateVertexBuffer(Niko::Object& obj)
+{
+	std::vector<Vertex> vertices = obj.mesh.vertices;
+	obj.transform.updateTransform();
+
+	for (auto& v : vertices) {
+		v.pos = obj.transform.mTransform * v.pos;
+	}
+
+	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+	// Mapping the buffer memory
+	void* data;
+	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+	memcpy(data, vertices.data(), (size_t)bufferSize);
+	vkUnmapMemory(device, stagingBufferMemory);
+
+	copyBuffer(stagingBuffer, obj.mesh.vertexBuffer, bufferSize);
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -1030,12 +1092,13 @@ inline void VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, u
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-		VkBuffer vertexBuffers[] = { obj.vertexBuffer };
+		VkBuffer vertexBuffers[] = { obj.mesh.vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
 
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+		
 
-		vkCmdBindIndexBuffer(commandBuffer, obj.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(commandBuffer, obj.mesh.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
 		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(obj.mesh.indices.size()), 1, 0, 0, 0);
 	}
@@ -1678,6 +1741,14 @@ void VulkanRenderer::handleInput()
 			trans -= primCamera.right;
 		}
 
+		/*if (Input->IsKeyPressed(GLFW_KEY_E)) {
+			for (auto& v : objects[0].mesh.vertices) {
+				v.pos += 10;
+				std::cout << v.pos.x << "\n";
+			}
+			
+		}*/
+
 		if (trans != glm::vec3(0)) {
 			primCamera.mTranslation += glm::normalize(trans) * time.DeltaTime();
 			primCamera.SetViewMatrix();
@@ -1777,11 +1848,11 @@ void VulkanRenderer::cleanup() {
 	vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
 	for (auto& obj : objects) {
-		vkDestroyBuffer(device, obj.indexBuffer, nullptr);
-		vkFreeMemory(device, obj.indexBufferMemory, nullptr);
+		vkDestroyBuffer(device, obj.mesh.indexBuffer, nullptr);
+		vkFreeMemory(device, obj.mesh.indexBufferMemory, nullptr);
 
-		vkDestroyBuffer(device, obj.vertexBuffer, nullptr);
-		vkFreeMemory(device, obj.vertexBufferMemory, nullptr);
+		vkDestroyBuffer(device, obj.mesh.vertexBuffer, nullptr);
+		vkFreeMemory(device, obj.mesh.vertexBufferMemory, nullptr);
 	}
 
 	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
