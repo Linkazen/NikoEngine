@@ -5,9 +5,13 @@ NikoEngine is a little project that I'm doing in my spare time, built from the g
 - [GLM 1.0.1](https://github.com/g-truc/glm)
 - [glfw-3.4](https://www.glfw.org/download.html) - 64 bit windows binaries
 - [stb](https://github.com/nothings/stb) - single-file public domain (or MIT licensed) libraries for C/C (only stb_image.h required)
-- [tiny-obj-loader](https://github.com/tinyobjloader/tinyobjloader/releases/tag/v1.0.6)
+- [tiny-obj-loader](https://github.com/tinyobjloader/tinyobjloader/blob/release/tiny_obj_loader.h)
 - Visual Studio 2022
     - With [GLSL Language Integration](https://marketplace.visualstudio.com/items?itemName=DanielScherzer.GLSL2022)
+
+### Preinstalled
+
+- [Dear ImGui](https://github.com/ocornut/imgui/tree/docking) - Docking version
 
 # How to Setup
 Install the VulkanSDK to your "C:/" drive using Vulkans installer.

@@ -1608,7 +1608,7 @@ void VulkanRenderer::handleInput()
 
 		// For freecam movement
 		glm::vec3 trans = glm::vec3(0);
-		if (Input->IsKeyHeld(GLFW_KEY_W) /*glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS*/) {
+		if (Input->IsKeyHeld(GLFW_KEY_W)) {
 			trans += primCamera.forward;
 		}
 		if (Input->IsKeyHeld(GLFW_KEY_S)) {
