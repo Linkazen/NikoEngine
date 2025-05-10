@@ -357,11 +357,11 @@ inline void VulkanRenderer::initVulkan() {
 	Niko::Object obj1;
 	obj1.mesh.loadObj("./assets/models/viking_room.obj");
 	//obj1.mesh.LoadCube(obj1.mesh);
-	obj1.transform.translation = glm::vec3(1, 0, 0);
+	obj1.transform.setTranslation(glm::vec3(1, 0, 0));
 	objects.push_back(obj1);
-	obj1.transform.translation = glm::vec3(0, 1, 0);
+	obj1.transform.setTranslation(glm::vec3(0, 1, 0));
 	objects.push_back(obj1);
-	obj1.transform.translation = glm::vec3(0, 0, 1);
+	obj1.transform.setTranslation(glm::vec3(0, 0, 1));
 	objects.push_back(obj1);
 
 	// End load an object method
@@ -603,11 +603,24 @@ void VulkanRenderer::ImGuiRender()
 	ImGui::Begin("Inspector");
 	
 	uint16_t loop = 0;
+	glm::vec3 tran;
+	glm::vec3 rot;
+	glm::vec3 scale;
 	for (auto& obj : objects) {
 		ImGui::PushID(loop);
-		ImGui::DragFloat3("Translation", &obj.transform.translation.x);
-		ImGui::DragFloat3("Rotation", &obj.transform.rotation.x);
-		ImGui::DragFloat3("Scale", &obj.transform.scale.x);
+		tran = obj.transform.getTranslation();
+		rot = obj.transform.getRotation();
+		scale = obj.transform.getScale();
+
+		if (ImGui::DragFloat3("Translation", &tran.x)) {
+			obj.transform.setTranslation(tran);
+		};
+		if (ImGui::DragFloat3("Rotation", &rot.x, 1.0f, -360, 360)) {
+			obj.transform.setRotation(rot);
+		};
+		if (ImGui::DragFloat3("Scale", &scale.x)) {
+			obj.transform.setScale(scale);
+		};
 		ImGui::PopID();
 		ImGui::Separator();
 		loop++;
@@ -956,10 +969,10 @@ inline void VulkanRenderer::createIndexBuffer(Niko::Object& obj) {
 
 inline void VulkanRenderer::createVertexBuffer(Niko::Object& obj) {
 	std::vector<Vertex> vertices = obj.mesh.vertices;
-	obj.transform.updateTransform();
+	glm::mat4 trans = obj.transform.getTransform();
 
 	for (auto& v : vertices) {
-		v.pos = obj.transform.mTransform * v.pos;
+		v.pos = trans * v.pos;
 	}
 
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
@@ -985,10 +998,10 @@ inline void VulkanRenderer::createVertexBuffer(Niko::Object& obj) {
 void VulkanRenderer::updateVertexBuffer(Niko::Object& obj)
 {
 	std::vector<Vertex> vertices = obj.mesh.vertices;
-	obj.transform.updateTransform();
+	glm::mat4 trans = obj.transform.getTransform();
 
 	for (auto& v : vertices) {
-		v.pos = obj.transform.mTransform * v.pos;
+		v.pos = trans * v.pos;
 	}
 
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();

@@ -6,25 +6,53 @@
 
 namespace Niko {
 	struct Transform {
-		glm::vec3 translation = glm::vec3(0);
-		glm::vec3 rotation = glm::vec3(0);
-		glm::vec3 scale = glm::vec3(1);
-
-		glm::mat4 mTransform = glm::identity<glm::mat4>();
+		Transform() = default;
 
 		void updateTransform() {
 			mTransform = glm::identity<glm::mat4>();
 
-			mTransform = glm::translate(mTransform, translation);
-			mTransform = glm::rotate(mTransform, glm::radians(rotation.x), glm::vec3(1, 0, 0));
-			mTransform = glm::rotate(mTransform, glm::radians(rotation.y), glm::vec3(0, 1, 0));
-			mTransform = glm::rotate(mTransform, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+			mTransform = glm::translate(mTransform, mTranslation);
 
+			mTransform = glm::rotate(mTransform, glm::radians(mRotation.x), glm::vec3(1, 0, 0));
+			mTransform = glm::rotate(mTransform, glm::radians(mRotation.y), glm::vec3(0, 1, 0));
+			mTransform = glm::rotate(mTransform, glm::radians(mRotation.z), glm::vec3(0, 0, 1));
 
-			mTransform = glm::scale(mTransform, scale);
+			mTransform = glm::scale(mTransform, mScale);
 		}
 
-		Transform() = default;
+		void setTranslation(glm::vec3 newTrans) {
+			mTranslation = newTrans;
+			updateTransform();
+		}
+		glm::vec3 getTranslation() {
+			return mTranslation;
+		}
+		void setRotation(glm::vec3 newRot) {
+			mRotation = newRot;
+			updateTransform();
+		}
+		glm::vec3 getRotation() {
+			return mRotation;
+		}
+		void setScale(glm::vec3 newScale) {
+			mScale = newScale;
+			updateTransform();
+		}
+		glm::vec3 getScale() {
+			return mScale;
+		}
+
+		glm::mat4 getTransform() {
+			return mTransform;
+		}
+
+	private:
+
+		glm::vec3 mTranslation = glm::vec3(0);
+		glm::vec3 mRotation = glm::vec3(0);
+		glm::vec3 mScale = glm::vec3(1);
+
+		glm::mat4 mTransform = glm::identity<glm::mat4>();
 	};
 
 	struct Mesh {
