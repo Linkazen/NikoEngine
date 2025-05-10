@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VisualStudioDir)\Libraries\stb;$(VisualStudioDir)\Libraries\glfw\include;$(VisualStudioDir)\Libraries\glm;$(VisualStudioDir)\Libraries\loaders;C:\VulkanSDK\1.4.309.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VisualStudioDir)\Libraries\stb;$(VisualStudioDir)\Libraries\glfw\include;$(VisualStudioDir)\Libraries\glm;$(VisualStudioDir)\Libraries\loaders;C:\VulkanSDK\1.4.309.0\Include;$(ProjectDir)Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -125,7 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VisualStudioDir)\Libraries\stb;$(VisualStudioDir)\Libraries\glfw\include;$(VisualStudioDir)\Libraries\glm;$(VisualStudioDir)\Libraries\loaders;C:\VulkanSDK\1.4.309.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VisualStudioDir)\Libraries\stb;$(VisualStudioDir)\Libraries\glfw\include;$(VisualStudioDir)\Libraries\glm;$(VisualStudioDir)\Libraries\loaders;C:\VulkanSDK\1.4.309.0\Include;$(ProjectDir)Libraries\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
