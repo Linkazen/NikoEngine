@@ -40,7 +40,6 @@ class VulkanRenderer
 {
 public:
 	void init();
-	void run();
 	void cleanup(std::vector<Niko::Object>& objv);
 	void render(std::vector<Niko::Object>& objVector);
 
@@ -51,8 +50,6 @@ public:
 	Niko::InputHandler* Input = nullptr;
 
 private:
-	TimeKeeper time = {};
-
 	GLFWwindow* window = nullptr;
 	VkInstance instance = {};
 	VkDebugUtilsMessengerEXT debugMessenger = {};
@@ -173,8 +170,6 @@ private:
 
 	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
-	void ImGuiRender(std::vector<Niko::Object>& objVector);
-
 	//// INIT VULKAN FUNCTIONS
 	void createTextureSampler();
 
@@ -241,8 +236,6 @@ private:
 	void setupDebugMessenger();
 
 	void updateUnformBuffer(uint32_t currentImage);
-
-	void handleInput();
 
 	void drawFrame(std::vector<Niko::Object>& objVector);
 

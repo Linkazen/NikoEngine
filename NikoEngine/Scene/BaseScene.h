@@ -21,9 +21,8 @@ public:
 		objects.push_back(obj1);
 	};
 
-	virtual void HandleInput() {};
-	virtual void Update() {};
-	virtual void ImGuiRender() {};
+	virtual void Update();
+	virtual void ImGuiRender();
 	virtual void Render() {
 		mRenderer->render(objects);
 	};

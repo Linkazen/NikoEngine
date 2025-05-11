@@ -45,12 +45,6 @@ void VulkanRenderer::init()
 	initWindow();
 	initVulkan();
 	initImGui();
-	
-	time.Begin();
-}
-
-void VulkanRenderer::run() {
-	
 }
 
 inline VkShaderModule VulkanRenderer::createShaderModule(const std::vector<char>& code) {
@@ -561,37 +555,6 @@ inline void VulkanRenderer::copyBufferToImage(VkBuffer buffer, VkImage image, ui
 	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
 	endSingleTimeCommands(commandBuffer);
-}
-
-void VulkanRenderer::ImGuiRender(std::vector<Niko::Object>& objVector)
-{
-	ImGui::Begin("Inspector");
-	
-	uint16_t loop = 0;
-	glm::vec3 tran;
-	glm::vec3 rot;
-	glm::vec3 scale;
-	for (auto& obj : objVector) {
-		ImGui::PushID(loop);
-		tran = obj.transform.getTranslation();
-		rot = obj.transform.getRotation();
-		scale = obj.transform.getScale();
-
-		if (ImGui::DragFloat3("Translation", &tran.x)) {
-			obj.transform.setTranslation(tran);
-		};
-		if (ImGui::DragFloat3("Rotation", &rot.x, 1.0f, -360, 360)) {
-			obj.transform.setRotation(rot);
-		};
-		if (ImGui::DragFloat3("Scale", &scale.x)) {
-			obj.transform.setScale(scale);
-		};
-		ImGui::PopID();
-		ImGui::Separator();
-		loop++;
-	}
-
-	ImGui::End();
 }
 
 //// INIT VULKAN FUNCTIONS
@@ -1670,70 +1633,6 @@ inline void VulkanRenderer::updateUnformBuffer(uint32_t currentImage) {
 	memcpy(uniformBuffersMapped[currentImage], &primCamera.ubo, sizeof(primCamera.ubo));
 }
 
-void VulkanRenderer::handleInput()
-{
-	if (Input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		xpos = 0;
-		oldxpos = 0;
-		ypos = 0;
-		oldypos = 0;
-
-		if (glfwRawMouseMotionSupported()) {
-			glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-		}
-	}
-	else if (Input->IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
-		rotatedThisFrame = false;
-	}
-	else if (Input->IsMouseHeld(GLFW_MOUSE_BUTTON_RIGHT)) {
-
-		glm::dvec2 diff(0);
-
-		glfwGetCursorPos(window, &xpos, &ypos);
-
-		if (oldxpos != 0 && oldypos != 0) {
-			diff.y = -(xpos - oldxpos);
-			diff.x = ypos - oldypos;
-
-			primCamera.RotateEuler(glm::vec3(diff * (double)time.DeltaTime(), 0));
-		}
-
-		oldxpos = xpos;
-		oldypos = ypos;
-
-		// For freecam movement
-		glm::vec3 trans = glm::vec3(0);
-		if (Input->IsKeyHeld(GLFW_KEY_W)) {
-			trans += primCamera.forward;
-		}
-		if (Input->IsKeyHeld(GLFW_KEY_S)) {
-			trans -= primCamera.forward;
-		}
-		if (Input->IsKeyHeld(GLFW_KEY_A)) {
-			trans += primCamera.right;
-		}
-		if (Input->IsKeyHeld(GLFW_KEY_D)) {
-			trans -= primCamera.right;
-		}
-
-		/*if (Input->IsKeyPressed(GLFW_KEY_E)) {
-			for (auto& v : objects[0].mesh.vertices) {
-				v.pos += 10;
-				std::cout << v.pos.x << "\n";
-			}
-			
-		}*/
-
-		if (trans != glm::vec3(0)) {
-			primCamera.mTranslation += glm::normalize(trans) * time.DeltaTime();
-			primCamera.SetViewMatrix();
-		}
-	}
-}
-
 inline void VulkanRenderer::drawFrame(std::vector<Niko::Object>& objVector) {
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
@@ -1803,16 +1702,6 @@ inline void VulkanRenderer::drawFrame(std::vector<Niko::Object>& objVector) {
 
 void VulkanRenderer::render(std::vector<Niko::Object>& objVector)
 {
-	time.Tick();
-	glfwPollEvents();
-
-	ImGui_ImplVulkan_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	ImGuiRender(objVector);
-
-	handleInput();
 
 	for (auto& obj : objVector) {
 		if (obj.mesh.bufCreated) {

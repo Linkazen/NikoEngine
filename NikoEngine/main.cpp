@@ -6,19 +6,27 @@
 
 int main() {
     VulkanRenderer* app = new VulkanRenderer();
+    TimeKeeper* time = new TimeKeeper();
     BaseScene* mainScene = new BaseScene(app);
 
     try {
         // Imgui init in vulkan app
         app->init();
+        time->Begin();
 
         while (!glfwWindowShouldClose(app->GetWindow())) {
-            mainScene->HandleInput();
+            glfwPollEvents();
+
             mainScene->Update();
+
+            // Handles the new ImGui frame
+            ImGui_ImplVulkan_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
             mainScene->ImGuiRender();
             mainScene->Render();
 
-            app->run();
+            time->Tick();
         }
         app->cleanup(mainScene->getObjects());
     }
