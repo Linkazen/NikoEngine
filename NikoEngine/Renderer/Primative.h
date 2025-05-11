@@ -18,7 +18,9 @@ struct Vertex {
     glm::vec2 texCoord;
 
     Vertex() {
-
+        pos = glm::vec4(0, 0, 0, 1);
+        color = glm::vec3(1, 1, 1);
+        texCoord = glm::vec2(0, 0);
     }
     Vertex(glm::vec4 mPos, glm::vec3 mCol, glm::vec2 mTexcoord) {
         pos = mPos;

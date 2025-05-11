@@ -41,7 +41,8 @@ class VulkanRenderer
 public:
 	void init();
 	void run();
-	void cleanup();
+	void cleanup(std::vector<Niko::Object>& objv);
+	void render(std::vector<Niko::Object>& objVector);
 
 	GLFWwindow* GetWindow() {
 		return window;
@@ -78,8 +79,6 @@ private:
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
-
-	std::vector<Niko::Object> objects = {};
 
 	std::vector<VkBuffer> uniformBuffers;
 	std::vector<VkDeviceMemory> uniformBuffersMemory;
@@ -174,7 +173,7 @@ private:
 
 	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
-	void ImGuiRender();
+	void ImGuiRender(std::vector<Niko::Object>& objVector);
 
 	//// INIT VULKAN FUNCTIONS
 	void createTextureSampler();
@@ -205,7 +204,7 @@ private:
 
 	void createCommandBuffers();
 
-	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, std::vector<Niko::Object>& objVector);
 
 	void createCommandPool();
 
@@ -245,6 +244,7 @@ private:
 
 	void handleInput();
 
-	void drawFrame();
+	void drawFrame(std::vector<Niko::Object>& objVector);
+
 };
 

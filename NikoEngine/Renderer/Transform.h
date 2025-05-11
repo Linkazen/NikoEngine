@@ -114,6 +114,8 @@ namespace Niko {
 
 		VkBuffer indexBuffer = {};
 		VkDeviceMemory indexBufferMemory = {};
+
+		bool bufCreated = false;
 	};
 
 	struct Object {

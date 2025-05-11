@@ -50,23 +50,7 @@ void VulkanRenderer::init()
 }
 
 void VulkanRenderer::run() {
-	time.Tick();
-	glfwPollEvents();
-
-	ImGui_ImplVulkan_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	ImGuiRender();
-
-	handleInput();
-
-	for (auto& obj : objects) {
-		updateVertexBuffer(obj);
-	}
-
-	drawFrame();
-	Input->update_states();
+	
 }
 
 inline VkShaderModule VulkanRenderer::createShaderModule(const std::vector<char>& code) {
@@ -350,25 +334,6 @@ inline void VulkanRenderer::initVulkan() {
 	primCamera.ubo.proj = glm::perspective(glm::radians(90.0f), WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 	primCamera.ubo.proj[1][1] *= -1;
 
-
-	//loadModel();
-	// Load an object method
-
-	Niko::Object obj1;
-	obj1.mesh.loadObj("./assets/models/viking_room.obj");
-	//obj1.mesh.LoadCube(obj1.mesh);
-	obj1.transform.setTranslation(glm::vec3(1, 0, 0));
-	objects.push_back(obj1);
-	obj1.transform.setTranslation(glm::vec3(0, 1, 0));
-	objects.push_back(obj1);
-	obj1.transform.setTranslation(glm::vec3(0, 0, 1));
-	objects.push_back(obj1);
-
-	// End load an object method
-	for (auto& obj : objects) {
-		createVertexBuffer(obj);
-		createIndexBuffer(obj);
-	}
 	createUniformBuffers();
 
 	createDescriptorPool();
@@ -598,7 +563,7 @@ inline void VulkanRenderer::copyBufferToImage(VkBuffer buffer, VkImage image, ui
 	endSingleTimeCommands(commandBuffer);
 }
 
-void VulkanRenderer::ImGuiRender()
+void VulkanRenderer::ImGuiRender(std::vector<Niko::Object>& objVector)
 {
 	ImGui::Begin("Inspector");
 	
@@ -606,7 +571,7 @@ void VulkanRenderer::ImGuiRender()
 	glm::vec3 tran;
 	glm::vec3 rot;
 	glm::vec3 scale;
-	for (auto& obj : objects) {
+	for (auto& obj : objVector) {
 		ImGui::PushID(loop);
 		tran = obj.transform.getTranslation();
 		rot = obj.transform.getRotation();
@@ -1058,7 +1023,7 @@ inline void VulkanRenderer::createCommandBuffers() {
 	}
 }
 
-inline void VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
+inline void VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, std::vector<Niko::Object>& objVector) {
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = 0; // Optional
@@ -1086,7 +1051,7 @@ inline void VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, u
 	vkCmdBeginRenderPass(commandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 	// Draws all objects in the object vector
-	for (auto& obj : objects) {
+	for (auto& obj : objVector) {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
 		VkViewport viewport{};
@@ -1769,7 +1734,7 @@ void VulkanRenderer::handleInput()
 	}
 }
 
-inline void VulkanRenderer::drawFrame() {
+inline void VulkanRenderer::drawFrame(std::vector<Niko::Object>& objVector) {
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
 	uint32_t imageIndex;
@@ -1789,7 +1754,7 @@ inline void VulkanRenderer::drawFrame() {
 
 	vkResetCommandBuffer(commandBuffers[currentFrame], 0);
 
-	recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
+	recordCommandBuffer(commandBuffers[currentFrame], imageIndex, objVector);
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -1836,7 +1801,36 @@ inline void VulkanRenderer::drawFrame() {
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void VulkanRenderer::cleanup() {
+void VulkanRenderer::render(std::vector<Niko::Object>& objVector)
+{
+	time.Tick();
+	glfwPollEvents();
+
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGuiRender(objVector);
+
+	handleInput();
+
+	for (auto& obj : objVector) {
+		if (obj.mesh.bufCreated) {
+			updateVertexBuffer(obj);
+		}
+		else {
+			createVertexBuffer(obj);
+			createIndexBuffer(obj);
+
+			obj.mesh.bufCreated = true;
+		}
+	}
+
+	drawFrame(objVector);
+	Input->update_states();
+}
+
+void VulkanRenderer::cleanup(std::vector<Niko::Object>& objv) {
 	vkDeviceWaitIdle(device);
 
 	ImGui_ImplVulkan_Shutdown();
@@ -1857,10 +1851,11 @@ void VulkanRenderer::cleanup() {
 	}
 
 	vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+	vkDestroyDescriptorPool(device, descriptorPoolImGui, nullptr);
 
 	vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
-	for (auto& obj : objects) {
+	for (auto& obj : objv) {
 		vkDestroyBuffer(device, obj.mesh.indexBuffer, nullptr);
 		vkFreeMemory(device, obj.mesh.indexBufferMemory, nullptr);
 

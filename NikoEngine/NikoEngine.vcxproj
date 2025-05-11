@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scene\BaseScene.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Libraries\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="Libraries\imgui\backends\imgui_impl_vulkan.cpp" />
@@ -165,6 +166,7 @@
     <Image Include="textures\thefella.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Libraries\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="Libraries\imgui\backends\imgui_impl_vulkan.h" />
