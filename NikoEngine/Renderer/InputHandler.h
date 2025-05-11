@@ -1,5 +1,6 @@
 #pragma once
 #include "GLFW/glfw3.h"
+#include "glm.hpp"
 #include <map>
 #include <iostream>
 #include <queue>
@@ -11,6 +12,13 @@ namespace Niko {
 		PRESS,
 		HOLD,
 		JUSTRELEASED
+	};
+
+	enum CursorMode {
+		NORMAL,
+		HIDDEN,
+		CAPTURED,
+		DISABLED
 	};
 
 	class InputHandler {
@@ -67,6 +75,33 @@ namespace Niko {
 			}
 		}
 
+		void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+		{
+			oldCursorPos = cursorPos;
+			cursorPos = { xpos, ypos };
+		}
+
+		glm::dvec2 cursorDeltaDistance() {
+			return oldCursorPos - cursorPos;
+		}
+
+		void changeCursorInputMode(GLFWwindow* window, CursorMode mode) {
+			switch (mode)
+			{
+			case Niko::NORMAL:
+
+				break;
+			case Niko::HIDDEN:
+				break;
+			case Niko::CAPTURED:
+				break;
+			case Niko::DISABLED:
+				break;
+			default:
+				break;
+			}
+		}
+
 		void update_states() {
 			for (int i = 0; i < mouseStateUpdateQueue.size(); i++) {
 				int mouseBut = mouseStateUpdateQueue.front();
@@ -103,6 +138,9 @@ namespace Niko {
 		std::map<uint16_t, KeyState> mMouse_states;
 		std::queue<uint16_t> keyStateUpdateQueue;
 		std::queue<uint16_t> mouseStateUpdateQueue;
+
+		glm::dvec2 oldCursorPos = { 0,0 };
+		glm::dvec2 cursorPos = { 0,0 };
 	};
 }
 
