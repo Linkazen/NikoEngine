@@ -30,8 +30,26 @@ public:
 	std::vector<Niko::Object>& getObjects() {
 		return objects;
 	}
+
+	void setTimeKeeper(TimeKeeper* tk) {
+		time = tk;
+	}
+	void setInputHandler(Niko::InputHandler* ih) {
+		input = ih;
+	}
 private:
 	std::vector<Niko::Object> objects = {};
 	VulkanRenderer* mRenderer = nullptr;
+
+	TimeKeeper* time = nullptr;
+	Niko::InputHandler* input = nullptr;
+
+	//// TEMP
+	double xpos = 0;
+	double oldxpos = 0;
+	double ypos = 0;
+	double oldypos = 0;
+	bool rotatedThisFrame = false;
+
 };
 

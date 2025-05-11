@@ -49,6 +49,25 @@ public:
 
 	Niko::InputHandler* Input = nullptr;
 
+	void setInputHandler(Niko::InputHandler* ih) {
+		Input = ih;
+
+		auto KeysInputCallback = [](GLFWwindow* w, int k, int sc, int a, int m) {
+			static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->key_callback(w, k, sc, a, m);
+			};
+
+		auto MouseInputCallback = [](GLFWwindow* w, int k, int a, int m) {
+			static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->mouse_callback(w, k, a, m);
+			};
+
+		glfwSetKeyCallback(window, KeysInputCallback);
+		glfwSetMouseButtonCallback(window, MouseInputCallback);
+	}
+
+	Camera& getPrimaryCamera() {
+		return primCamera;
+	}
+
 private:
 	GLFWwindow* window = nullptr;
 	VkInstance instance = {};

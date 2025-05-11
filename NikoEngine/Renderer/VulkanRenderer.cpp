@@ -267,20 +267,6 @@ inline void VulkanRenderer::initWindow() {
 	window = glfwCreateWindow(WIDTH, HEIGHT, "NikoEngine", nullptr, nullptr);
 	glfwSetWindowUserPointer(window, this);
 	glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
-
-	// Handles input init (put this in a new function)
-	Input = new Niko::InputHandler();
-
-	auto KeysInputCallback = [](GLFWwindow* w, int k, int sc, int a, int m) {
-		static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->key_callback(w, k, sc, a, m);
-		};
-
-	auto MouseInputCallback = [](GLFWwindow* w, int k, int a, int m) {
-		static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->mouse_callback(w, k, a, m);
-		};
-
-	glfwSetKeyCallback(window, KeysInputCallback);
-	glfwSetMouseButtonCallback(window, MouseInputCallback);
 }
 
 inline void VulkanRenderer::framebufferResizeCallback(GLFWwindow* window, int width, int height) {
@@ -1702,7 +1688,6 @@ inline void VulkanRenderer::drawFrame(std::vector<Niko::Object>& objVector) {
 
 void VulkanRenderer::render(std::vector<Niko::Object>& objVector)
 {
-
 	for (auto& obj : objVector) {
 		if (obj.mesh.bufCreated) {
 			updateVertexBuffer(obj);
@@ -1716,7 +1701,6 @@ void VulkanRenderer::render(std::vector<Niko::Object>& objVector)
 	}
 
 	drawFrame(objVector);
-	Input->update_states();
 }
 
 void VulkanRenderer::cleanup(std::vector<Niko::Object>& objv) {

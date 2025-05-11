@@ -7,12 +7,18 @@
 int main() {
     VulkanRenderer* app = new VulkanRenderer();
     TimeKeeper* time = new TimeKeeper();
+    Niko::InputHandler* Input = new Niko::InputHandler();
     BaseScene* mainScene = new BaseScene(app);
 
     try {
         // Imgui init in vulkan app
         app->init();
+        app->setInputHandler(Input);
+
         time->Begin();
+
+        mainScene->setTimeKeeper(time);
+        mainScene->setInputHandler(Input);
 
         while (!glfwWindowShouldClose(app->GetWindow())) {
             glfwPollEvents();
@@ -27,6 +33,7 @@ int main() {
             mainScene->Render();
 
             time->Tick();
+            Input->update_states();
         }
         app->cleanup(mainScene->getObjects());
     }

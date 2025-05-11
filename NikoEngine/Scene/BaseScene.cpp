@@ -2,58 +2,61 @@
 
 void BaseScene::Update()
 {
-	//if (Input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-		//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		//	xpos = 0;
-		//	oldxpos = 0;
-		//	ypos = 0;
-		//	oldypos = 0;
+	if (input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+		std::cout << "hello";
 
-		//	if (glfwRawMouseMotionSupported()) {
-		//		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-		//	}
-		//}
-		//else if (Input->IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) {
-		//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		//	glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
-		//	rotatedThisFrame = false;
-		//}
-		//else if (Input->IsMouseHeld(GLFW_MOUSE_BUTTON_RIGHT)) {
+		glfwSetInputMode(mRenderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		xpos = 0;
+		oldxpos = 0;
+		ypos = 0;
+		oldypos = 0;
 
-		//	glm::dvec2 diff(0);
+		if (glfwRawMouseMotionSupported()) {
+			glfwSetInputMode(mRenderer->GetWindow(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		}
+	}
+	else if (input->IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) {
+		glfwSetInputMode(mRenderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(mRenderer->GetWindow(), GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+		rotatedThisFrame = false;
+	}
+	else if (input->IsMouseHeld(GLFW_MOUSE_BUTTON_RIGHT)) {
 
-		//	glfwGetCursorPos(window, &xpos, &ypos);
+		glm::dvec2 diff(0);
+		Camera& primCamera = mRenderer->getPrimaryCamera();
 
-		//	if (oldxpos != 0 && oldypos != 0) {
-		//		diff.y = -(xpos - oldxpos);
-		//		diff.x = ypos - oldypos;
+		glfwGetCursorPos(mRenderer->GetWindow(), &xpos, &ypos);
 
-		//		primCamera.RotateEuler(glm::vec3(diff * (double)time.DeltaTime(), 0));
-		//	}
+		if (oldxpos != 0 && oldypos != 0) {
+			diff.y = -(xpos - oldxpos);
+			diff.x = ypos - oldypos;
 
-		//	oldxpos = xpos;
-		//	oldypos = ypos;
+			primCamera.RotateEuler(glm::vec3(diff * (double)time->DeltaTime(), 0));
+		}
 
-		//	// For freecam movement
-		//	glm::vec3 trans = glm::vec3(0);
-		//	if (Input->IsKeyHeld(GLFW_KEY_W)) {
-		//		trans += primCamera.forward;
-		//	}
-		//	if (Input->IsKeyHeld(GLFW_KEY_S)) {
-		//		trans -= primCamera.forward;
-		//	}
-		//	if (Input->IsKeyHeld(GLFW_KEY_A)) {
-		//		trans += primCamera.right;
-		//	}
-		//	if (Input->IsKeyHeld(GLFW_KEY_D)) {
-		//		trans -= primCamera.right;
-		//	}
+		oldxpos = xpos;
+		oldypos = ypos;
 
-		//	if (trans != glm::vec3(0)) {
-		//		primCamera.mTranslation += glm::normalize(trans) * time.DeltaTime();
-		//		primCamera.SetViewMatrix();
-		//	}
-		//}
+		// For freecam movement
+		glm::vec3 trans = glm::vec3(0);
+		if (input->IsKeyHeld(GLFW_KEY_W)) {
+			trans += primCamera.forward;
+		}
+		if (input->IsKeyHeld(GLFW_KEY_S)) {
+			trans -= primCamera.forward;
+		}
+		if (input->IsKeyHeld(GLFW_KEY_A)) {
+			trans += primCamera.right;
+		}
+		if (input->IsKeyHeld(GLFW_KEY_D)) {
+			trans -= primCamera.right;
+		}
+
+		if (trans != glm::vec3(0)) {
+			primCamera.mTranslation += glm::normalize(trans) * time->DeltaTime();
+			primCamera.SetViewMatrix();
+		}
+	}
 }
 
 void BaseScene::ImGuiRender()
