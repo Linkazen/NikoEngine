@@ -13,8 +13,7 @@ void BaseScene::Update()
 		glm::dvec2 diff = input->cursorDeltaDistance();
 		Camera& primCamera = mRenderer->getPrimaryCamera();
 
-
-		primCamera.RotateEuler(glm::vec3(diff.y * (double)time->DeltaTime(), diff.x * (double)time->DeltaTime(), 0));
+		primCamera.RotateEuler(glm::vec3(-diff.y * (double)time->DeltaTime(), diff.x * (double)time->DeltaTime(), 0));
 
 		// For freecam movement
 		glm::vec3 trans = glm::vec3(0);

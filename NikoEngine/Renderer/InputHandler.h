@@ -108,8 +108,7 @@ namespace Niko {
 				break;
 			case Niko::DISABLED:
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-				oldCursorPos = { 0,0 };
-				cursorPos = { 0,0 };
+				
 				if (glfwRawMouseMotionSupported()) {
 					glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 				}
@@ -122,6 +121,10 @@ namespace Niko {
 			}
 		}
 
+		// Whatever is in the queues below is ran, this means that updates
+		// to the key states can be done for each frame, JUSTRELEASED state
+		// and PRESS state especially as these only happen for one frame. And these 
+		// states can now be polled.
 		void update_states() {
 			for (int i = 0; i < mouseStateUpdateQueue.size(); i++) {
 				int mouseBut = mouseStateUpdateQueue.front();

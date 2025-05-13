@@ -43,13 +43,5 @@ private:
 
 	TimeKeeper* time = nullptr;
 	Niko::InputHandler* input = nullptr;
-
-	//// TEMP
-	double xpos = 0;
-	double oldxpos = 0;
-	double ypos = 0;
-	double oldypos = 0;
-	bool rotatedThisFrame = false;
-
 };
 
