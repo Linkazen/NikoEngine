@@ -60,8 +60,13 @@ public:
 			static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->mouse_callback(w, k, a, m);
 			};
 
+		auto CursorInputCallback = [](GLFWwindow* w, double x, double y) {
+			static_cast<VulkanRenderer*>(glfwGetWindowUserPointer(w))->Input->cursor_position_callback(w, x, y);
+			};
+
 		glfwSetKeyCallback(window, KeysInputCallback);
 		glfwSetMouseButtonCallback(window, MouseInputCallback);
+		glfwSetCursorPosCallback(window, CursorInputCallback);
 		ImGui_ImplGlfw_InitForVulkan(window, true);
 	}
 

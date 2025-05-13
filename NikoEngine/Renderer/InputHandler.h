@@ -65,8 +65,6 @@ namespace Niko {
 		}
 
 		void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
-			std::cout << "Mouse: " << button << "\n";
-
 			if (action == GLFW_PRESS) {
 				this->mMouse_states[button] = KeyState::PRESS;
 				mouseStateUpdateQueue.push(button);
@@ -80,7 +78,6 @@ namespace Niko {
 
 		void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 		{
-			oldCursorPos = cursorPos;
 			cursorPos = { xpos, ypos };
 		}
 
@@ -92,15 +89,35 @@ namespace Niko {
 			switch (mode)
 			{
 			case Niko::NORMAL:
-
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				oldCursorPos = { 0,0 };
+				cursorPos = { 0,0 };
+				if (glfwRawMouseMotionSupported()) {
+					glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+				}
 				break;
 			case Niko::HIDDEN:
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+				oldCursorPos = { 0,0 };
+				cursorPos = { 0,0 };
 				break;
 			case Niko::CAPTURED:
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+				oldCursorPos = { 0,0 };
+				cursorPos = { 0,0 };
 				break;
 			case Niko::DISABLED:
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				oldCursorPos = { 0,0 };
+				cursorPos = { 0,0 };
+				if (glfwRawMouseMotionSupported()) {
+					glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+				}
 				break;
 			default:
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				oldCursorPos = { 0,0 };
+				cursorPos = { 0,0 };
 				break;
 			}
 		}
@@ -133,6 +150,8 @@ namespace Niko {
 
 				keyStateUpdateQueue.pop();
 			}
+
+			oldCursorPos = cursorPos;
 		}
 
 	private:

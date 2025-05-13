@@ -3,39 +3,18 @@
 void BaseScene::Update()
 {
 	if (input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-		std::cout << "hello";
-
-		glfwSetInputMode(mRenderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		xpos = 0;
-		oldxpos = 0;
-		ypos = 0;
-		oldypos = 0;
-
-		if (glfwRawMouseMotionSupported()) {
-			glfwSetInputMode(mRenderer->GetWindow(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-		}
+		input->changeCursorInputMode(mRenderer->GetWindow(), Niko::CursorMode::DISABLED);
 	}
 	else if (input->IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) {
-		glfwSetInputMode(mRenderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetInputMode(mRenderer->GetWindow(), GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
-		rotatedThisFrame = false;
+		input->changeCursorInputMode(mRenderer->GetWindow(), Niko::CursorMode::NORMAL);
 	}
 	else if (input->IsMouseHeld(GLFW_MOUSE_BUTTON_RIGHT)) {
 
-		glm::dvec2 diff(0);
+		glm::dvec2 diff = input->cursorDeltaDistance();
 		Camera& primCamera = mRenderer->getPrimaryCamera();
 
-		glfwGetCursorPos(mRenderer->GetWindow(), &xpos, &ypos);
 
-		if (oldxpos != 0 && oldypos != 0) {
-			diff.y = -(xpos - oldxpos);
-			diff.x = ypos - oldypos;
-
-			primCamera.RotateEuler(glm::vec3(diff * (double)time->DeltaTime(), 0));
-		}
-
-		oldxpos = xpos;
-		oldypos = ypos;
+		primCamera.RotateEuler(glm::vec3(diff.y * (double)time->DeltaTime(), diff.x * (double)time->DeltaTime(), 0));
 
 		// For freecam movement
 		glm::vec3 trans = glm::vec3(0);
