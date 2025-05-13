@@ -20,8 +20,8 @@ public:
 		mScale = glm::vec3(1);
 		SetDirections();
 
-		ubo.model = glm::mat4(1);
-		ubo.view = glm::lookAt(mTranslation, mTranslation + (glm::vec3(0, 0, 1) * forward), glm::vec3(0,1,0));
+		ubo.model = glm::rotate(glm::mat4(1), glm::radians(90.f), glm::vec3(-1, 0, 0));
+		ubo.view = glm::lookAt(mTranslation, mTranslation + forward, glm::vec3(0,1,0));
 		ubo.proj = glm::perspective(glm::radians(90.0f), 800.f / (float)600.f, 0.1f, 100.0f);
 
 		ubo.proj[1][1] *= -1;
@@ -79,12 +79,13 @@ public:
 		forward.x = cos(mRotation.x) * sin(mRotation.y);
 		forward.y = -sin(mRotation.x);
 		forward.z = cos(mRotation.x) * cos(mRotation.y);
+		forward = -forward;
 
-		right.x = cos(mRotation.y);
-		right.y = 0;
-		right.z = -sin(mRotation.y);
+		left.x = cos(mRotation.y);
+		left.y = 0;
+		left.z = -sin(mRotation.y);
 
-		up = cross(forward, right);
+		up = cross(left, forward);
 	}
 
 	UniformBufferObject ubo;
@@ -95,7 +96,7 @@ public:
 	float fov;
 
 	glm::vec3 forward;
-	glm::vec3 right;
+	glm::vec3 left;
 	glm::vec3 up;
 
 	//glm::quat mQuatRotation;
