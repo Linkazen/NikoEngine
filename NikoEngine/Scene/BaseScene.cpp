@@ -32,6 +32,9 @@ void BaseScene::Update()
 		if (input->IsKeyHeld(GLFW_KEY_SPACE)) {
 			trans += primCamera.up;
 		}
+		if (input->IsKeyHeld(GLFW_KEY_LEFT_CONTROL)) {
+			trans -= primCamera.up;
+		}
 
 		if (trans != glm::vec3(0)) {
 			primCamera.mTranslation += glm::normalize(trans) * time->DeltaTime();
