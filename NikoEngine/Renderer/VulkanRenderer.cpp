@@ -332,7 +332,6 @@ void VulkanRenderer::initImGui()
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-	ImGui_ImplGlfw_InitForVulkan(window, true);
 
 
 	// ImGui Setup

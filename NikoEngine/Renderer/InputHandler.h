@@ -5,6 +5,7 @@
 #include <iostream>
 #include <queue>
 #include <functional>
+#include <imgui.h>
 
 namespace Niko {
 	enum KeyState {
@@ -64,6 +65,8 @@ namespace Niko {
 		}
 
 		void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
+			std::cout << "Mouse: " << button << "\n";
+
 			if (action == GLFW_PRESS) {
 				this->mMouse_states[button] = KeyState::PRESS;
 				mouseStateUpdateQueue.push(button);

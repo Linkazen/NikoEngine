@@ -62,6 +62,7 @@ public:
 
 		glfwSetKeyCallback(window, KeysInputCallback);
 		glfwSetMouseButtonCallback(window, MouseInputCallback);
+		ImGui_ImplGlfw_InitForVulkan(window, true);
 	}
 
 	Camera& getPrimaryCamera() {
