@@ -2,8 +2,6 @@
 #include <imgui.h>
 #include "Scene/BaseScene.h"
 
-
-
 int main() {
     VulkanRenderer* app = new VulkanRenderer();
     TimeKeeper* time = new TimeKeeper();

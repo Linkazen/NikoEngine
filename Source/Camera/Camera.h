@@ -1,9 +1,9 @@
 #pragma once
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtx/hash.hpp>
-#include <gtx/quaternion.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/hash.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 struct UniformBufferObject {
 	// Look into alignas https://docs.vulkan.org/tutorial/latest/05_Uniform_buffers/01_Descriptor_pool_and_sets.html
@@ -21,7 +21,7 @@ public:
 		SetDirections();
 
 		ubo.model = glm::rotate(glm::mat4(1), glm::radians(90.f), glm::vec3(-1, 0, 0));
-		ubo.view = glm::lookAt(mTranslation, mTranslation + forward, glm::vec3(0,1,0));
+		ubo.view = glm::lookAtLH(mTranslation, mTranslation + forward, glm::vec3(0,1,0));
 		ubo.proj = glm::perspective(glm::radians(90.0f), 800.f / (float)600.f, 0.1f, 100.0f);
 
 		ubo.proj[1][1] *= -1;
@@ -72,20 +72,20 @@ public:
 	}
 
 	void SetViewMatrix() {
-		ubo.view = glm::lookAt(mTranslation, mTranslation + forward, glm::vec3(0, 1, 0));
+		ubo.view = glm::lookAtLH(mTranslation, mTranslation + forward, glm::vec3(0, 1, 0));
 	}
 
 	void SetDirections() {
-		forward.x = cos(mRotation.x) * sin(mRotation.y);
-		forward.y = -sin(mRotation.x);
-		forward.z = cos(mRotation.x) * cos(mRotation.y);
+		forward.x = glm::cos(mRotation.x) * glm::sin(mRotation.y);
+		forward.y = -glm::sin(mRotation.x);
+		forward.z = glm::cos(mRotation.x) * glm::cos(mRotation.y);
 		forward = -forward;
 
-		left.x = cos(mRotation.y);
+		left.x = glm::cos(mRotation.y);
 		left.y = 0;
-		left.z = -sin(mRotation.y);
+		left.z = -glm::sin(mRotation.y);
 
-		up = cross(left, forward);
+		up = glm::cross(left, forward);
 	}
 
 	UniformBufferObject ubo;

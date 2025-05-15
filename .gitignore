@@ -250,3 +250,48 @@ AkavacheSqliteLinkerOverride.cs
 NuGetBuild
 WiX.Toolset.DummyFile.txt
 GitHubVS.sln.DotSettings
+
+# VSCode stuff with CMake tools stuff
+.vscode-test/
+build/
+dist/
+node_modules/
+out/
+test/fakebin/
+test/**/log.txt
+test/**/bin
+vscode-extensions-localization-export/
+vscode-translations-import/
+jobs/loc/LCL
+OneLocBuild
+.ci-build
+.DS_Store
+debug.log
+npm-debug.log
+package-lock.json
+test.txt
+*.backup
+*.db*
+*.log
+*.vsix
+**/.vscode/CMakeTools
+**/nls.*.json
+**/*.nls.json
+**/*.nls.*.json
+
+# VSCODE IGNORES
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# Base object file for testing perposes
+!Source/assets/models/viking_room.obj

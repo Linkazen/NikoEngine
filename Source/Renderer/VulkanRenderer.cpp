@@ -1,5 +1,6 @@
 #include "VulkanRenderer.h"
 #include "variables.h"
+#include <filesystem>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -1156,8 +1157,6 @@ inline void VulkanRenderer::createRenderPass() {
 inline void VulkanRenderer::createGraphicsPipeline() {
 	auto vertShaderCode = readFile("shaders/vert.spv");
 	auto fragShaderCode = readFile("shaders/frag.spv");
-
-	//std::cout << "VERTSHADER SIZE: " << vertShaderCode.size() << "\nFRAGSHADER SIZE: " << fragShaderCode.size() << "\n";
 
 	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
 	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);

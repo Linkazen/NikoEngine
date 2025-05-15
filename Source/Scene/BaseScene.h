@@ -11,7 +11,7 @@ public:
 		// Load an object method
 
 		Niko::Object obj1;
-		obj1.mesh.loadObj("./assets/models/viking_room.obj");
+		obj1.mesh.loadObj("assets/models/viking_room.obj");
 		//obj1.mesh.LoadCube(obj1.mesh);
 		obj1.transform.setTranslation(glm::vec3(1, 0, 0));
 		objects.push_back(obj1);
