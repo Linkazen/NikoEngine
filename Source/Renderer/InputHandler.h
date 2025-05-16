@@ -82,6 +82,7 @@ namespace Niko {
 		}
 
 		glm::dvec2 cursorDeltaDistance() {
+			// Issue with the Delta distance, where seemingly when switching input modes, the distance is much greater than it should be
 			return oldCursorPos - cursorPos;
 		}
 
@@ -90,21 +91,15 @@ namespace Niko {
 			{
 			case Niko::NORMAL:
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-				oldCursorPos = { 0,0 };
-				cursorPos = { 0,0 };
 				if (glfwRawMouseMotionSupported()) {
 					glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
 				}
 				break;
 			case Niko::HIDDEN:
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-				oldCursorPos = { 0,0 };
-				cursorPos = { 0,0 };
 				break;
 			case Niko::CAPTURED:
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
-				oldCursorPos = { 0,0 };
-				cursorPos = { 0,0 };
 				break;
 			case Niko::DISABLED:
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -115,8 +110,6 @@ namespace Niko {
 				break;
 			default:
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-				oldCursorPos = { 0,0 };
-				cursorPos = { 0,0 };
 				break;
 			}
 		}

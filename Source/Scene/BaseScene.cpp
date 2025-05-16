@@ -47,6 +47,15 @@ void BaseScene::ImGuiRender()
 {
 	ImGui::Begin("Inspector");
 
+	// Some Debug info
+	std::string mouseMovX = std::to_string(input->cursorDeltaDistance().x);
+	std::string mouseMovY = std::to_string(input->cursorDeltaDistance().y);
+
+	// c_str seems to not be formatted (Null-terminated pointer)
+	// so just use TextUnformatted instead of regular imgui::text
+	ImGui::TextUnformatted(mouseMovX.c_str());
+	ImGui::TextUnformatted(mouseMovY.c_str());
+
 	uint16_t loop = 0;
 	glm::vec3 tran;
 	glm::vec3 rot;
