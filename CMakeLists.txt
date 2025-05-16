@@ -16,24 +16,24 @@ add_executable(NikoEngine ${SOURCE})
 
 target_include_directories(NikoEngine PUBLIC 
     "${PROJECT_SOURCE_DIR}/Source/Libraries" 
-    "${PROJECT_SOURCE_DIR}/Source/Libraries/imgui" 
+    "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui" 
     "${PROJECT_SOURCE_DIR}/Source/Libraries/stb" 
     "${PROJECT_SOURCE_DIR}/Source/Libraries/tol" 
 )
 
 # Handles compiling the ImGui Library
 add_library(ImGui STATIC
-    "Source/Libraries/imgui/imgui.cpp"
-    "Source/Libraries/imgui/imgui_demo.cpp"
-    "Source/Libraries/imgui/imgui_draw.cpp"
-    "Source/Libraries/imgui/imgui_widgets.cpp"
-    "Source/Libraries/imgui/imgui_tables.cpp"
-    "Source/Libraries/imgui/backends/imgui_impl_glfw.cpp"
-    "Source/Libraries/imgui/backends/imgui_impl_vulkan.cpp"
+    "Source/Libraries/ImGui/imgui.cpp"
+    "Source/Libraries/ImGui/imgui_demo.cpp"
+    "Source/Libraries/ImGui/imgui_draw.cpp"
+    "Source/Libraries/ImGui/imgui_widgets.cpp"
+    "Source/Libraries/ImGui/imgui_tables.cpp"
+    "Source/Libraries/ImGui/backends/imgui_impl_glfw.cpp"
+    "Source/Libraries/ImGui/backends/imgui_impl_vulkan.cpp"
 )
 
 target_include_directories(ImGui PUBLIC 
-    "${PROJECT_SOURCE_DIR}/Source/Libraries/imgui" 
+    "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui" 
 )
 
 # Compiles required packages
