@@ -21,3 +21,16 @@ Install the [vcpkg package manager](https://learn.microsoft.com/en-gb/vcpkg/get_
 
 Build the files using a CMake compiler (I use VSCode personally).
 
+## Linux
+### Ubuntu
+Install Vulkan packages;
+
+`sudo apt install vulkan-tools libvulkan-dev vulkan-validationlayers spirv-tools`
+
+Install GLFW3;
+
+`sudo apt install libglfw3-dev`
+
+Install GLM;
+
+`sudo apt install libglm-dev`
