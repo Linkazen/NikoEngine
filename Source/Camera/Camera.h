@@ -20,7 +20,7 @@ public:
 		mScale = glm::vec3(1);
 		SetDirections();
 
-		ubo.model = glm::rotate(glm::mat4(1), glm::radians(90.f), glm::vec3(-1, 0, 0));
+		ubo.model = glm::identity<glm::mat4>();
 		ubo.view = glm::lookAt(mTranslation, mTranslation + forward, glm::vec3(0,1,0));
 		ubo.proj = glm::perspective(glm::radians(90.0f), 800.f / (float)600.f, 0.1f, 100.0f);
 
