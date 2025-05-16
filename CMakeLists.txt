@@ -6,10 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # These are the CPP files that actually have code in them,
 # it seems like CPP files without code do not need to be placed here.
 set(SOURCE 
-    Source/main.cpp
-    Source/Renderer/VulkanRenderer.cpp
-    Source/Renderer/Transform.cpp
-    Source/Scene/BaseScene.cpp
+    "Source/main.cpp"
+    "Source/Renderer/VulkanRenderer.cpp"
+    "Source/Renderer/Transform.cpp"
+    "Source/Scene/BaseScene.cpp"
 )
 
 add_executable(NikoEngine ${SOURCE})
