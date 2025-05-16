@@ -4,7 +4,6 @@ NikoEngine is a little project that I'm doing in my spare time, built from the g
 - [VulkanSDK 1.4.309.0](https://vulkan.lunarg.com/sdk/home)
 - [GLM 1.0.1](https://github.com/g-truc/glm)
 - [glfw-3.4](https://www.glfw.org/download.html) - 64 bit windows binaries
-- CMake Compiler
 
 ### Preinstalled
 
@@ -12,24 +11,13 @@ NikoEngine is a little project that I'm doing in my spare time, built from the g
 - [tiny-obj-loader](https://github.com/tinyobjloader/tinyobjloader/blob/release/tiny_obj_loader.h)
 - [Dear ImGui](https://github.com/ocornut/imgui/tree/docking) - Docking version
 
-<!-- # How to Setup
-Install the VulkanSDK to your "C:/" drive using Vulkans installer.
+# Setup
+## Windows
+Install the [VulkanSDK using the official installer](https://vulkan.lunarg.com/sdk/home), this should allow CMake to see the Vulkan install.
 
-Find your "Visual Studio 2022" folder (Should be in your documents).
-Within this folder create a "Libraries" folder, and create 4 more folders in "Libraries";
-- glm
-- glfw
-- stb
-- loaders
+Install the [vcpkg package manager](https://learn.microsoft.com/en-gb/vcpkg/get_started/get-started?pivots=shell-powershell) (Only cloning and running the bootstrap is needed), then proceed to install two dependancies using vcpkg;
+- [glm](https://vcpkg.link/ports/glm)
+- [glfw3](https://vcpkg.link/ports/glfw3)
 
-Place all relevent files in these three folders from the above dependancies.
+Build the files using a CMake compiler (I use VSCode personally).
 
-<details>
-<summary>View of What Folders Should Look Like</summary>
-    
-![Shows the glfw library](./ImagesForMarkdown/GLFWLibrary.png)
-
-![Shows the glm library](./ImagesForMarkdown/GLMLibrary.png)
-
-![Shows the stb library](./ImagesForMarkdown/STBLibrary.png)
-</details> -->
