@@ -94,6 +94,10 @@ private:
 	VkDescriptorSetLayout descriptorSetLayout = {};
 	VkPipelineLayout pipelineLayout = {};
 	VkPipeline graphicsPipeline = {};
+
+	VkPipelineLayout gridPipelineLayout = {};
+	VkPipeline gridPipeline = {};
+
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 	VkCommandPool commandPool = {};
 	std::vector<VkCommandBuffer> commandBuffers;
@@ -231,6 +235,8 @@ private:
 	void createFramebuffers();
 
 	void createRenderPass();
+
+	void createGridGraphicsPipeline();
 
 	void createGraphicsPipeline();
 
