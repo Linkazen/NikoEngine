@@ -7,10 +7,12 @@ layout(set = 0, binding = 0) uniform UniformBufferObject {
 	mat4 proj;
 } ubo;
 
-layout(location = 1) out vec3 nearPoint;
-layout(location = 2) out vec3 farPoint;
-layout(location = 3) out mat4 fragView;
-layout(location = 7) out mat4 fragProj;
+layout(location = 0) out float near; //0.01
+layout(location = 1) out float far; //100
+layout(location = 2) out vec3 nearPoint;
+layout(location = 3) out vec3 farPoint;
+layout(location = 4) out mat4 fragView;
+layout(location = 8) out mat4 fragProj;
 
 // Grid position are in clipped space
 vec3 gridPlane[6] = vec3[] (
@@ -31,5 +33,7 @@ void main() {
     farPoint = UnprojectPoint(p.x, p.y, 1.0, ubo.view, ubo.proj).xyz; // unprojecting on the far plane
     fragView = ubo.view;
     fragProj = ubo.proj;
+    near = 0.01;
+    far = 100;
     gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
 }
