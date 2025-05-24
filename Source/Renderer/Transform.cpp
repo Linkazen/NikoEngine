@@ -26,12 +26,20 @@ void Niko::Mesh::loadObj(std::string MODEL_PATH)
 		for (const auto& index : shape.mesh.indices) {
 			Vertex vertex{};
 
+			glm::mat4 rotMat = glm::identity<glm::mat4>();
+
+			rotMat = glm::rotate(rotMat, glm::radians(90.f), glm::vec3(1,0,0));
+			rotMat = glm::rotate(rotMat, glm::radians(180.f), glm::vec3(0,1,0));
+			rotMat = glm::rotate(rotMat, glm::radians(-90.f), glm::vec3(0,0,1));
+
 			vertex.pos = glm::vec4(
 				attrib.vertices[3 * index.vertex_index + 0],
 				attrib.vertices[3 * index.vertex_index + 1],
 				attrib.vertices[3 * index.vertex_index + 2],
 				1
 			);
+
+			vertex.pos = rotMat * vertex.pos;
 
 			vertex.texCoord = {
 				attrib.texcoords[2 * index.texcoord_index + 0],
