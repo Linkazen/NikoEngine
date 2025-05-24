@@ -225,10 +225,10 @@ inline void VulkanRenderer::createInstance() {
 	// All the info about the vulkan application
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	appInfo.pApplicationName = "Hello Triangle";
-	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.pEngineName = "No Engine";
-	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.pApplicationName = "NikoEngine";
+	appInfo.applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
+	appInfo.pEngineName = "NikoEngine";
+	appInfo.engineVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
 	appInfo.apiVersion = VK_API_VERSION_1_0;
 
 	VkInstanceCreateInfo createInfo{};
@@ -335,16 +335,14 @@ void VulkanRenderer::initImGui()
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-
-
 	// ImGui Setup
 	// Setup Platform/Renderer backends
 	ImGui_ImplVulkan_InitInfo init_info = {};
 	init_info.Instance = instance;
 	init_info.PhysicalDevice = physicalDevice;
 	init_info.Device = device;
-	init_info.QueueFamily = findQueueFamilies(physicalDevice).presentFamily.value();
-	init_info.Queue = presentQueue;
+	init_info.QueueFamily = findQueueFamilies(physicalDevice).graphicsFamily.value();
+	init_info.Queue = graphicsQueue;
 	init_info.PipelineCache = pipelineCache;
 	init_info.DescriptorPool = descriptorPoolImGui;
 	init_info.Subpass = 0;
@@ -472,7 +470,11 @@ inline void VulkanRenderer::transitionImageLayout(VkImage image, VkFormat format
 	barrier.newLayout = newLayout;
 
 	barrier.image = image;
-	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	if (format == VK_FORMAT_D32_SFLOAT) {
+		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	} else {
+		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	}
 	barrier.subresourceRange.baseMipLevel = 0;
 	barrier.subresourceRange.levelCount = mipLevels;
 	barrier.subresourceRange.baseArrayLayer = 0;
@@ -1626,14 +1628,6 @@ inline void VulkanRenderer::createLogicalDevice() {
 		queueCreateInfos.push_back(queueCreateInfo);
 	}
 
-	VkDeviceQueueCreateInfo queueCreateInfo{};
-	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-	queueCreateInfo.queueCount = 1;
-
-	float quePriority = 1.0f;
-	queueCreateInfo.pQueuePriorities = &quePriority;
-
 	VkPhysicalDeviceFeatures deviceFeatures{};
 	deviceFeatures.samplerAnisotropy = VK_TRUE;
 	deviceFeatures.sampleRateShading = VK_TRUE; // enable sample shading feature for the device
@@ -1644,7 +1638,6 @@ inline void VulkanRenderer::createLogicalDevice() {
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 	createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-
 	createInfo.pEnabledFeatures = &deviceFeatures;
 
 	// Used for compatibility with older versions of Vulkan
