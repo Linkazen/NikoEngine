@@ -3,12 +3,6 @@
 #include <tiny_obj_loader.h>
 #include <unordered_map>
 
-//#include "Transform.h"
-//
-//inline void Niko::Mesh::loadObj(std::string MODEL_PATH) {
-//	
-//}
-
 void Niko::Mesh::loadObj(std::string MODEL_PATH)
 {
 	tinyobj::attrib_t attrib;
@@ -28,6 +22,8 @@ void Niko::Mesh::loadObj(std::string MODEL_PATH)
 
 			glm::mat4 rotMat = glm::identity<glm::mat4>();
 
+			// Rotates models so they are the correct orientation
+			// ? Could possibly simplify this? Or maybe even make this redundant by doing it engine side, instead of model loading side
 			rotMat = glm::rotate(rotMat, glm::radians(90.f), glm::vec3(1,0,0));
 			rotMat = glm::rotate(rotMat, glm::radians(180.f), glm::vec3(0,1,0));
 			rotMat = glm::rotate(rotMat, glm::radians(-90.f), glm::vec3(0,0,1));

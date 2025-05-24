@@ -1032,10 +1032,12 @@ inline void VulkanRenderer::recordCommandBuffer(VkCommandBuffer commandBuffer, u
 	}
 
 	// Handles drawing the grid
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gridPipeline);
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gridPipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
-
-	vkCmdDraw(commandBuffer, 6, 1, 0, 0);
+	if (renderGrid) {
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gridPipeline);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gridPipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
+	
+		vkCmdDraw(commandBuffer, 6, 1, 0, 0);
+	}
 
 	ImGui::Render();
 	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[currentFrame]);

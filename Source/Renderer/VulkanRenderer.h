@@ -133,13 +133,10 @@ private:
 	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
 
 	Camera primCamera;
-	double oldxpos = 0.f;
-	double oldypos = 0.f;
 
-	double xpos = 0.f;
-	double ypos = 0.f;
-	bool rotatedThisFrame = false;
-
+	// * Runtime changeable bools for how the engine should work
+	bool renderGrid = true;
+	//
 
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 
