@@ -17,6 +17,7 @@ add_executable(NikoEngine ${SOURCE})
 target_include_directories(NikoEngine PUBLIC 
     "${PROJECT_SOURCE_DIR}/Source/Libraries" 
     "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui" 
+    "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui/backends" 
     "${PROJECT_SOURCE_DIR}/Source/Libraries/stb" 
     "${PROJECT_SOURCE_DIR}/Source/Libraries/tol" 
 )
@@ -32,10 +33,6 @@ add_library(ImGui STATIC
     "Source/Libraries/ImGui/backends/imgui_impl_vulkan.cpp"
 )
 
-target_include_directories(ImGui PUBLIC 
-    "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui" 
-)
-
 # Compiles required packages
 find_package(Vulkan REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
@@ -43,6 +40,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
 find_package(glm CONFIG REQUIRED)
 
 find_package(glfw3 CONFIG REQUIRED)
+
+target_include_directories(ImGui PUBLIC 
+    "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui" 
+)
+target_link_libraries(ImGui Vulkan::Vulkan glfw)
+
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan glm::glm glfw ImGui)
 
 # Copies the assets into the build
