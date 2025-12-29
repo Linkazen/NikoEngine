@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
+set(CMAKE_GENERATOR "Ninja")
+message("-- Generator is set to ${CMAKE_GENERATOR}")
+
 project(NikoEngine VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -38,8 +41,11 @@ find_package(Vulkan REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
 
 find_package(glm CONFIG REQUIRED)
+target_include_directories(${PROJECT_NAME} PUBLIC ${GLM_INCLUDE_DIRS})
+message("-- Found GLM")
 
 find_package(glfw3 CONFIG REQUIRED)
+message("-- Found GLFW3")
 
 target_include_directories(ImGui PUBLIC 
     "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui" 
