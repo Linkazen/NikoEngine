@@ -5,10 +5,24 @@ project(
   NikoEngine
   VERSION 0.1.0
   LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  message("-- Using Clang")
+  # using Clang
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  message("-- Using GCC")
+  # using GCC
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  message("-- Using Intel C++")
+  # using Intel C++
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  message("-- Using Visual Studio C++")
+  # using Visual Studio C++
+endif()
 
 # These are the CPP files that actually have code in them, it seems like CPP
 # files without code do not need to be placed here.
