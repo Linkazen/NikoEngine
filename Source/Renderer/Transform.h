@@ -1,7 +1,6 @@
 #pragma once
 #include "Primative.h"
 #include <string>
-
 #include <vector>
 
 namespace Niko {
