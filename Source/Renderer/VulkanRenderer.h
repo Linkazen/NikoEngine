@@ -1,13 +1,7 @@
 #pragma once
 
-#include <algorithm> // Necessary for std::clamp
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
 #include <optional>
-#include <set>
-#include <stdexcept>
-#include <unordered_map>
+
 #include <vector>
 
 // ImGui Includes
@@ -18,9 +12,7 @@
 
 #include "../Camera/Camera.h"
 #include "InputHandler.h"
-#include "TimeKeeper.h"
 #include "Transform.h"
-#include "variables.h"
 
 struct QueueFamilyIndices {
   std::optional<uint32_t> graphicsFamily;
