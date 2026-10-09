@@ -3,15 +3,12 @@
 // For more documentation on how to configure debug tasks,
 // see: https://zed.dev/docs/debugger
 [
-	{
-		"label": "Run Debug",
-		"request": "launch",
-		"program": "$ZED_WORKTREE_ROOT/build/Debug/NikoEngine",
-		"adapter": "CodeLLDB",
-		"cwd": "$ZED_WORKTREE_ROOT",
-		"build": {
-			"save": "all",
-			"command": "cmake -G 'Ninja Multi-Config' -S . -B build && ninja -C build -f build-Debug.ninja",
-		},
-	},
+  {
+    "label": "Run Debug",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/build/Debug/NikoEngine",
+    "adapter": "CodeLLDB",
+    "cwd": "$ZED_WORKTREE_ROOT/build/Debug",
+    "build": "Build NikoEngine (Ninja)",
+  },
 ]

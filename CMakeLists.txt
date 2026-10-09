@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 4.3.0)
 message("-- Generator is set to ${CMAKE_GENERATOR}")
 
 project(
@@ -9,6 +9,20 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  message("-- Using Clang")
+  # using Clang
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  message("-- Using GCC")
+  # using GCC
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+  message("-- Using Intel C++")
+  # using Intel C++
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  message("-- Using Visual Studio C++")
+  # using Visual Studio C++
+endif()
 
 # These are the CPP files that actually have code in them, it seems like CPP
 # files without code do not need to be placed here.
@@ -54,17 +68,21 @@ target_link_libraries(ImGui Vulkan::Vulkan glfw)
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan glm::glm glfw ImGui)
 
 # Copies the assets into the build
-add_custom_target(
-  copy_assets
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/assets
-    ${CMAKE_CURRENT_BINARY_DIR}/assets)
+set(DEBUG_FOLDER_LIST Debug Release RelWithDebInfo)
 
-add_custom_target(
-  copy_shaders
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/shaders
-    ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+foreach(dir IN LISTS DEBUG_FOLDER_LIST)
+  add_custom_target(
+    copy_assets_${dir}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/assets
+      ${CMAKE_CURRENT_BINARY_DIR}/${dir}/assets
+      COMMENT "Adding assets folder to ${dir} folder.")
 
-add_dependencies(NikoEngine copy_assets)
-add_dependencies(NikoEngine copy_shaders)
+  add_custom_target(copy_shaders_${dir} COMMAND ${CMAKE_COMMAND} -E
+                    copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/shaders
+                    ${CMAKE_CURRENT_BINARY_DIR}/${dir}/shaders
+                    COMMENT "Adding shader file to ${dir} folder.")
+
+  add_dependencies(NikoEngine copy_assets_${dir})
+  add_dependencies(NikoEngine copy_shaders_${dir})
+endforeach()
