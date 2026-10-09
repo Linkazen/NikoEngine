@@ -3,6 +3,37 @@
 #include <tiny_obj_loader.h>
 #include <unordered_map>
 
+void Niko::Mesh::LoadCube(Mesh &m) {
+  m.indices = {// Top
+               7, 6, 2, 2, 3, 7,
+
+               // Bottom
+               5, 4, 0, 0, 1, 5,
+
+               // Left
+               6, 2, 0, 0, 4, 6,
+
+               // Right
+               7, 3, 1, 1, 5, 7,
+
+               // Front
+               3, 2, 0, 0, 1, 3,
+
+               // Back
+               7, 6, 4, 4, 5, 7};
+
+  m.vertices = {
+      Vertex{glm::vec3(-1, -1, 0.5), glm::vec3(1), glm::vec2(0)},  // 0
+      Vertex{glm::vec3(1, -1, 0.5), glm::vec3(1), glm::vec2(0)},   // 1
+      Vertex{glm::vec3(-1, 1, 0.5), glm::vec3(1), glm::vec2(0)},   // 2
+      Vertex{glm::vec3(1, 1, 0.5), glm::vec3(1), glm::vec2(0)},    // 3
+      Vertex{glm::vec3(-1, -1, -0.5), glm::vec3(1), glm::vec2(0)}, // 4
+      Vertex{glm::vec3(1, -1, -0.5), glm::vec3(1), glm::vec2(0)},  // 5
+      Vertex{glm::vec3(-1, 1, -0.5), glm::vec3(1), glm::vec2(0)},  // 6
+      Vertex{glm::vec3(1, 1, -0.5), glm::vec3(1), glm::vec2(0)}    // 7
+  };
+}
+
 void Niko::Mesh::loadObj(std::string modelPath) {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;

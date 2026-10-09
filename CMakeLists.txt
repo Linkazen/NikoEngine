@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 4.3.0)
 message("-- Generator is set to ${CMAKE_GENERATOR}")
 
 project(
   NikoEngine
   VERSION 0.1.0
   LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -68,17 +69,21 @@ target_link_libraries(ImGui Vulkan::Vulkan glfw)
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan glm::glm glfw ImGui)
 
 # Copies the assets into the build
-add_custom_target(
-  copy_assets
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/assets
-    ${CMAKE_CURRENT_BINARY_DIR}/assets)
+set(DEBUG_FOLDER_LIST Debug Release RelWithDebInfo)
 
-add_custom_target(
-  copy_shaders
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/shaders
-    ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+foreach(dir IN LISTS DEBUG_FOLDER_LIST)
+  add_custom_target(
+    copy_assets_${dir}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/assets
+      ${CMAKE_CURRENT_BINARY_DIR}/${dir}/assets
+      COMMENT "Adding assets folder to ${dir} folder.")
 
-add_dependencies(NikoEngine copy_assets)
-add_dependencies(NikoEngine copy_shaders)
+  add_custom_target(copy_shaders_${dir} COMMAND ${CMAKE_COMMAND} -E
+                    copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/shaders
+                    ${CMAKE_CURRENT_BINARY_DIR}/${dir}/shaders
+                    COMMENT "Adding shader file to ${dir} folder.")
+
+  add_dependencies(NikoEngine copy_assets_${dir})
+  add_dependencies(NikoEngine copy_shaders_${dir})
+endforeach()
