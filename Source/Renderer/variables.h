@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <vector>
 
 #define GLFW_INCLUDE_VULKAN
@@ -14,9 +13,6 @@ const bool enableValidationLayers = true;
 const uint32_t WIDTH = 1280;
 const uint32_t HEIGHT = 720;
 const int MAX_FRAMES_IN_FLIGHT = 2;
-
-// const std::string MODEL_PATH = "assets/models/viking_room.obj";
-const std::string TEXTURE_PATH = "assets/textures/viking_room.png";
 
 const std::vector<const char *> validationLayers = {
     "VK_LAYER_KHRONOS_validation"};
