@@ -3,24 +3,13 @@
 
 class TimeKeeper {
 public:
-  TimeKeeper() {};
-  void Begin() {
-    mStartTime = std::chrono::steady_clock::now();
-    mOldTime = mStartTime;
-    mCurrTime = mStartTime;
+  TimeKeeper() = default;
 
-    mDeltaTime = 0;
-  }
-  void Tick() {
-    mOldTime = mCurrTime;
-    mCurrTime = std::chrono::steady_clock::now();
+  void Begin();
 
-    mDeltaTime = std::chrono::duration<float, std::chrono::seconds::period>(
-                     mCurrTime - mOldTime)
-                     .count();
-  }
+  void Tick();
 
-  float DeltaTime() { return mDeltaTime; }
+  float DeltaTime();
 
 private:
   std::chrono::steady_clock::time_point mStartTime;

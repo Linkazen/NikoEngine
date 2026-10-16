@@ -10,6 +10,33 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+GLFWwindow *VulkanRenderer::GetWindow() { return window; }
+void VulkanRenderer::setInputHandler(Niko::InputHandler *ih) {
+  Input = ih;
+
+  auto KeysInputCallback = [](GLFWwindow *w, int k, int sc, int a, int m) {
+    static_cast<VulkanRenderer *>(glfwGetWindowUserPointer(w))
+        ->Input->key_callback(w, k, sc, a, m);
+  };
+
+  auto MouseInputCallback = [](GLFWwindow *w, int k, int a, int m) {
+    static_cast<VulkanRenderer *>(glfwGetWindowUserPointer(w))
+        ->Input->mouse_callback(w, k, a, m);
+  };
+
+  auto CursorInputCallback = [](GLFWwindow *w, double x, double y) {
+    static_cast<VulkanRenderer *>(glfwGetWindowUserPointer(w))
+        ->Input->cursor_position_callback(w, x, y);
+  };
+
+  glfwSetKeyCallback(window, KeysInputCallback);
+  glfwSetMouseButtonCallback(window, MouseInputCallback);
+  glfwSetCursorPosCallback(window, CursorInputCallback);
+  ImGui_ImplGlfw_InitForVulkan(window, true);
+}
+
+Camera &VulkanRenderer::getPrimaryCamera() { return primCamera; }
+
 static std::vector<char> readFile(const std::string &filename) {
   std::ifstream file(filename, std::ios::ate | std::ios::binary);
 

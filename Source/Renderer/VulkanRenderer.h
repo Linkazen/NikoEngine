@@ -35,35 +35,13 @@ public:
   void cleanup(std::vector<Niko::Object> &objv);
   void render(std::vector<Niko::Object> &objVector);
 
-  GLFWwindow *GetWindow() { return window; }
+  GLFWwindow *GetWindow();
 
   Niko::InputHandler *Input = nullptr;
 
-  void setInputHandler(Niko::InputHandler *ih) {
-    Input = ih;
+  void setInputHandler(Niko::InputHandler *ih);
 
-    auto KeysInputCallback = [](GLFWwindow *w, int k, int sc, int a, int m) {
-      static_cast<VulkanRenderer *>(glfwGetWindowUserPointer(w))
-          ->Input->key_callback(w, k, sc, a, m);
-    };
-
-    auto MouseInputCallback = [](GLFWwindow *w, int k, int a, int m) {
-      static_cast<VulkanRenderer *>(glfwGetWindowUserPointer(w))
-          ->Input->mouse_callback(w, k, a, m);
-    };
-
-    auto CursorInputCallback = [](GLFWwindow *w, double x, double y) {
-      static_cast<VulkanRenderer *>(glfwGetWindowUserPointer(w))
-          ->Input->cursor_position_callback(w, x, y);
-    };
-
-    glfwSetKeyCallback(window, KeysInputCallback);
-    glfwSetMouseButtonCallback(window, MouseInputCallback);
-    glfwSetCursorPosCallback(window, CursorInputCallback);
-    ImGui_ImplGlfw_InitForVulkan(window, true);
-  }
-
-  Camera &getPrimaryCamera() { return primCamera; }
+  Camera &getPrimaryCamera();
 
 private:
   GLFWwindow *window = nullptr;

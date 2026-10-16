@@ -1,3 +1,4 @@
+
 #include "Transform.h"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
@@ -80,3 +81,47 @@ void Niko::Mesh::loadObj(std::string modelPath) {
     }
   }
 }
+
+void Niko::Transform::updateTransform() {
+  mTransform = glm::identity<glm::mat4>();
+
+  mTransform = glm::translate(mTransform, mTranslation);
+
+  mTransform =
+      glm::rotate(mTransform, glm::radians(mRotation.x), glm::vec3(1, 0, 0));
+  mTransform =
+      glm::rotate(mTransform, glm::radians(mRotation.y), glm::vec3(0, 1, 0));
+  mTransform =
+      glm::rotate(mTransform, glm::radians(mRotation.z), glm::vec3(0, 0, 1));
+
+  mTransform = glm::scale(mTransform, mScale);
+}
+
+void Niko::Transform::setTranslation(glm::vec3 newTrans) {
+  mTranslation = newTrans;
+  updateTransform();
+}
+
+glm::vec3 Niko::Transform::getTranslation() { return mTranslation; }
+
+void Niko::Transform::setRotation(glm::vec3 newRot) {
+  mRotation = newRot;
+  updateTransform();
+}
+
+glm::vec3 Niko::Transform::getRotation() { return mRotation; }
+
+void Niko::Transform::setScale(glm::vec3 newScale) {
+  mScale = newScale;
+  updateTransform();
+}
+
+glm::vec3 Niko::Transform::getScale() { return mScale; }
+glm::mat4 Niko::Transform::getTransform() { return mTransform; }
+
+Niko::Mesh::Mesh() {
+  vertices = {};
+  indices = {};
+}
+
+Niko::Mesh::Mesh(std::string model_path) { loadObj(model_path); }

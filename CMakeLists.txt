@@ -26,8 +26,14 @@ endif()
 
 # These are the CPP files that actually have code in them, it seems like CPP
 # files without code do not need to be placed here.
-set(SOURCE "Source/main.cpp" "Source/Renderer/VulkanRenderer.cpp"
-           "Source/Renderer/Transform.cpp" "Source/Scene/BaseScene.cpp")
+set(SOURCE
+    "Source/main.cpp"
+    "Source/Renderer/VulkanRenderer.cpp"
+    "Source/Renderer/Transform.cpp"
+    "Source/Scene/BaseScene.cpp"
+    "Source/Renderer/InputHandler.cpp"
+    "Source/Renderer/TimeKeeper.cpp"
+    "Source/Camera/Camera.cpp")
 
 add_executable(NikoEngine ${SOURCE})
 
@@ -76,12 +82,15 @@ foreach(dir IN LISTS DEBUG_FOLDER_LIST)
     COMMAND
       ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/assets
       ${CMAKE_CURRENT_BINARY_DIR}/${dir}/assets
-      COMMENT "Adding assets folder to ${dir} folder.")
+    COMMENT "Adding assets folder to ${dir} folder.")
 
-  add_custom_target(copy_shaders_${dir} COMMAND ${CMAKE_COMMAND} -E
-                    copy_directory ${CMAKE_CURRENT_LIST_DIR}/Source/shaders
-                    ${CMAKE_CURRENT_BINARY_DIR}/${dir}/shaders
-                    COMMENT "Adding shader file to ${dir} folder.")
+  add_custom_target(
+    copy_shaders_${dir}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_CURRENT_LIST_DIR}/Source/shaders
+      ${CMAKE_CURRENT_BINARY_DIR}/${dir}/shaders
+    COMMENT "Adding shader file to ${dir} folder.")
 
   add_dependencies(NikoEngine copy_assets_${dir})
   add_dependencies(NikoEngine copy_shaders_${dir})
