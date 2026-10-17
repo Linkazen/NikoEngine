@@ -37,6 +37,7 @@ public:
   static void LoadCube(Mesh &m);
 
   void loadObj(std::string MODEL_PATH);
+  void loadObj(std::stringstream &modelData);
 
   VkBuffer vertexBuffer = {};
   VkDeviceMemory vertexBufferMemory = {};

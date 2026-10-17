@@ -5,10 +5,11 @@ project(
   NikoEngine
   VERSION 0.1.0
   LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+add_compile_options(-Wno-c23-extensions)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   message("-- Using Clang")
@@ -43,7 +44,9 @@ target_include_directories(
          "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui"
          "${PROJECT_SOURCE_DIR}/Source/Libraries/ImGui/backends"
          "${PROJECT_SOURCE_DIR}/Source/Libraries/stb"
-         "${PROJECT_SOURCE_DIR}/Source/Libraries/tol")
+         "${PROJECT_SOURCE_DIR}/Source/Libraries/tol"
+         "${PROJECT_SOURCE_DIR}/Source"
+         )
 
 # Handles compiling the ImGui Library
 add_library(

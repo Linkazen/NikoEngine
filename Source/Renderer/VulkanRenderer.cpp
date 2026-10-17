@@ -1,4 +1,5 @@
 #include "VulkanRenderer.h"
+#include "EmbeddedData.h"
 #include "variables.h"
 #include <algorithm> // Necessary for std::clamp
 #include <cstdlib>
@@ -708,8 +709,9 @@ VulkanRenderer::createImage(uint32_t width, uint32_t height, uint32_t mipLevels,
 
 inline void VulkanRenderer::createTextureImage() {
   int texWidth, texHeight, texChannels;
-  stbi_uc *pixels = stbi_load(TEXTURE_PATH.c_str(), &texWidth, &texHeight,
-                              &texChannels, STBI_rgb_alpha);
+  stbi_uc *pixels = stbi_load_from_memory(
+      VIKING_ROOM_TEXTURE_DATA, sizeof(VIKING_ROOM_TEXTURE_DATA), &texWidth,
+      &texHeight, &texChannels, STBI_rgb_alpha);
   mipLevels = static_cast<uint32_t>(
                   std::floor(std::log2(std::max(texWidth, texHeight)))) +
               1;

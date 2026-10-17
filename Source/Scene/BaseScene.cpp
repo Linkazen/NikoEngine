@@ -1,4 +1,6 @@
 #include "BaseScene.h"
+#include "EmbeddedData.h"
+#include <sstream>
 
 BaseScene::BaseScene(VulkanRenderer *renderer) {
   mRenderer = renderer;
@@ -6,8 +8,10 @@ BaseScene::BaseScene(VulkanRenderer *renderer) {
   // loadModel();
   //  Load an object method
 
+  std::stringstream VKDataStream = std::stringstream(VIKING_ROOM_MODEL_DATA);
+
   Niko::Object obj1;
-  obj1.mesh.loadObj("assets/models/viking_room.obj");
+  obj1.mesh.loadObj(VKDataStream);
   // obj1.mesh.LoadCube(obj1.mesh);
   obj1.transform.setTranslation(glm::vec3(1, 0, 0));
   objects.push_back(obj1);
